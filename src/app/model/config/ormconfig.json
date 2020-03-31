@@ -1,0 +1,11 @@
+{
+    "name": "default",
+    "type": "mongodb",
+    "url": "mongodb://localhost:27017/abcz",
+    "entities": [
+
+    ],
+    "logging": true,
+    "useNewUrlParser": true,
+    "useUnifiedTopology": true
+}

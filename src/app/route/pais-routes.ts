@@ -14,11 +14,11 @@ export class PaisRoutes implements AppRouter {
 
    public initRoutes(): void {
       // obs Hanlder é aceito varios nas rotas ele pode retornar void ou Promisse<any>
-      this.routes.get('', this.controller.teste2);
+      this.router.get('', this.controller.teste2);
       this.router.get(/^\/(?:([a-z\-]+?))\/(?:([0-9]+?))\/(?:([a-z0-9\-]+?))$/i, this.controller.teste);
    }
 
-   public get routes(): Router {
+   public routes(): Router {
       return this.router;
    }
 

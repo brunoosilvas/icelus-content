@@ -1,10 +1,10 @@
 import { Router } from 'express';
 
-import { AppRouter } from '@env/router';
+import { Routes, CrudRoutes } from '@env/router';
 
 import { GrupoController } from '@module/admin/controller/grupo-controller';
 
-export class GrupoRoutes implements AppRouter {
+export class GrupoRoutes implements Routes {
 
    private readonly controller:GrupoController = new GrupoController();
    private router:Router = Router();
@@ -14,14 +14,13 @@ export class GrupoRoutes implements AppRouter {
    }
 
    public initRoutes(): void {
-      // obs Hanlder é aceito varios nas rotas ele pode retornar void ou Promisse<any>
-      // this.routes.get('', this.controller.teste2);
-      // this.router.get(/^\/(?:([a-z\-]+?))\/(?:([0-9]+?))\/(?:([a-z0-9\-]+?))$/i, this.controller.teste);
-
-
+      this.router.get(CrudRoutes.padrao, this.controller.index);
+      this.router.get(CrudRoutes.paginar, this.controller.index);
+      this.router.get(CrudRoutes.editar, this.controller.edit);
+      this.router.get(CrudRoutes.registar, this.controller.edit);
    }
 
-   public routes(): Router {
+   public get routes(): Router {
       return this.router;
    }
 

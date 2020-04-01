@@ -11,6 +11,7 @@ import Paises from '@model/entity/paises';
 import { Ports } from '@env/ports';
 import { } from '@env/router';
 import { registerRouter, registerRouterByApi, registerRouterByModule } from './router';
+import { GrupoRoutes } from '@module/admin/route/grupo-routes';
 
 export class Application {
 
@@ -39,9 +40,11 @@ export class Application {
       this.express.set('views', 'public/views');
       this.express.set('view engine', 'ejs');
 
-      registerRouter();
-      registerRouterByApi();
-      registerRouterByModule();
+      // registerRouter();
+      // registerRouterByApi();
+      registerRouterByModule(this.express);
+
+      // this.teste(this.express);
 
       this.express.listen(port, () => {
          console.log('ativo...');
@@ -52,6 +55,10 @@ export class Application {
             connection.close();
          }
       });
+   }
+
+   private teste(router: Router): void {
+      router.use('', new GrupoRoutes().routes);
    }
 
    private mapEntities(): ConnectionOptions {

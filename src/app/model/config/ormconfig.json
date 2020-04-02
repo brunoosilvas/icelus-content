@@ -1,7 +1,7 @@
 {
     "name": "default",
     "type": "mongodb",
-    "url": "mongodb://localhost:27017/abcz",
+    "url": "mongodb://localhost:27017/portal",
     "entities": [
 
     ],

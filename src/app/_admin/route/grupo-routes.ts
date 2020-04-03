@@ -14,10 +14,10 @@ export class GrupoRoutes implements Routes {
    }
 
    public initRoutes(): void {
-      this.router.get(CrudRoutes.padrao, this.controller.index);
-      this.router.get(CrudRoutes.paginar, this.controller.index);
-      this.router.get(CrudRoutes.editar, this.controller.edit);
-      this.router.get(CrudRoutes.registar, this.controller.edit);
+      // this.router.get(CrudRoutes.padrao, this.controller.index);
+      // this.router.get(CrudRoutes.paginar, this.controller.index);
+      // this.router.get(CrudRoutes.editar, this.controller.edit);
+      this.router.get(CrudRoutes.registar, this.controller.registrar);
    }
 
    public get routes(): Router {

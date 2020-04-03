@@ -1,4 +1,5 @@
 import express, { Router, json } from 'express';
+
 import compression from 'compression';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -9,8 +10,8 @@ import ormconfig from '@model/config/ormconfig.json';
 import Paises from '@model/entity/paises';
 
 import { Ports } from '@env/ports';
-import { } from '@env/router';
-import { registerRouter, registerRouterByApi, registerRouterByModule } from './router';
+import { registerRouter, registerRouterByApi, registerRouterByModule } from '@env/router';
+
 import { GrupoRoutes } from '@module/admin/route/grupo-routes';
 
 export class Application {

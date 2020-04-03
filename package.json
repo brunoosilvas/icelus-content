@@ -1,9 +1,9 @@
 {
-   "name": "abcz",
+   "name": "icelus-portal",
    "version": "1.0.0",
    "description": "",
    "scripts": {
-      "dev": "nodemon --watch \"src/\" --exec \"ts-node src/index.ts\" -e ts",
+      "dev": "nodemon --watch \"src/\" --watch \"public\" --exec \"ts-node src/index.ts\" -e ts,ejs",
       "prod": "tsc && node dist/index.js"
    },
    "author": "brunoosilvas@gmail.com",
@@ -14,16 +14,18 @@
       "@controller": "src/app/controller",
       "@model/config": "src/app/model/config",
       "@model/entity": "src/app/model/entity",
+      "@view": "src/app/view",
       "@route": "src/app/route",
       "@env": "src/env",
-      "@middleware": "src/middleware"
+      "@middleware": "src/middleware",
+      "@root": "src/root"
    },
    "devDependencies": {
       "@types/body-parser": "^1.17.1",
       "@types/compression": "^1.7.0",
       "@types/cors": "^2.8.6",
       "@types/ejs": "^2.6.3",
-      "@types/express": "^4.17.1",
+      "@types/express": "^4.17.4",
       "@types/helmet": "0.0.45",
       "@types/module-alias": "^2.0.0",
       "@types/node": "^12.12.32"
@@ -33,6 +35,7 @@
       "compression": "^1.7.4",
       "cors": "^2.8.5",
       "ejs": "^2.7.1",
+      "ejs-mate": "^3.0.0",
       "express": "^4.17.1",
       "helmet": "^3.22.0",
       "module-alias": "^2.2.2",

@@ -1,11 +1,17 @@
 import { Request, Response, NextFunction } from 'express';
-import { path } from '@root';
+import { pathModuleView, pathModuleTemplate } from '@root';
 
 export class GrupoController {
 
    public async registrar(request:Request, response:Response, next:NextFunction): Promise<Response | void> {
       try {
-         return response.render(path('_admin/grupo/_layout'), { template: path('_admin/template/layout'), view: path('_admin/grupo/registrar')});
+
+
+         const render = pathModuleTemplate('_admin', 'grupo/_layout');
+         const template = pathModuleTemplate('_admin', 'template/_layout');
+         const view = pathModuleView('_admin', 'grupo/registrar');
+
+         return response.render(render, { template, view });
       } catch (error) {
          return next(error);
       }

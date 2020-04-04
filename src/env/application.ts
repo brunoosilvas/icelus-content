@@ -7,11 +7,11 @@ import helmet from 'helmet';
 import { createConnection, ConnectionOptions, Connection, getConnection } from 'typeorm';
 
 import ormconfig from '@model/config/ormconfig.json';
-import Paises from '@model/entity/paises';
+import Grupo from '@model/entity/grupo';
 
 import { Ports } from '@env/ports';
-import { registerRouter, registerRouterByApi, registerRouterByModule } from '@env/router';
 
+import { registerRouter, registerRouterByApi, registerRouterByModule } from '@env/router';
 import { GrupoRoutes } from '@module/admin/route/grupo-routes';
 
 export class Application {
@@ -63,7 +63,7 @@ export class Application {
    }
 
    private mapEntities(): ConnectionOptions {
-      ormconfig.entities.push(Paises);
+      ormconfig.entities.push(Grupo);
 
       return ormconfig as ConnectionOptions;
    }

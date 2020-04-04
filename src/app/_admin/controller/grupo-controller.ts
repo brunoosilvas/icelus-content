@@ -1,11 +1,21 @@
 import { Request, Response, NextFunction } from 'express';
-import { pathModuleView, pathModuleTemplate } from '@root';
+import { Service } from 'typedi';
 
+import { pathModuleView, pathModuleTemplate } from '@root';
+import { GrupoService } from '@model/service/grupo-service';
+import { ConteudoService } from '@model/service/conteudo-service';
+
+@Service()
 export class GrupoController {
+
+   constructor(private grupoService:GrupoService,
+      private conteudoService:ConteudoService)
+   {
+
+   }
 
    public async registrar(request:Request, response:Response, next:NextFunction): Promise<Response | void> {
       try {
-
 
          const render = pathModuleTemplate('_admin', 'grupo/_layout');
          const template = pathModuleTemplate('_admin', 'template/_layout');

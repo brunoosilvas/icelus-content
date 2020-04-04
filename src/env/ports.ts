@@ -1,5 +1,5 @@
 
 export enum Ports {
-    http = 8000,
+    http = 80,
     https = 442
 }

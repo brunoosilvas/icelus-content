@@ -14,6 +14,8 @@
       "@controller": "src/app/controller",
       "@model/config": "src/app/model/config",
       "@model/entity": "src/app/model/entity",
+      "@model/repository": "src/app/model/repository",
+      "@model/service": "src/app/model/service",
       "@view": "src/app/view",
       "@route": "src/app/route",
       "@env": "src/env",

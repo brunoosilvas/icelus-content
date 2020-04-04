@@ -1,12 +1,14 @@
 import { Router, NextFunction } from 'express';
 import { GrupoRoutes } from "@module/admin/route/grupo-routes";
 
+import Container from 'typedi';
+
 export interface Routes {
    initRoutes(): void;
 }
 
 export function registerRouterByModule(router: Router): void {
-   router.use('/admin/grupo', new GrupoRoutes().routes);
+   router.use('/admin/grupo', Container.get(GrupoRoutes).routes);
 }
 
 export function registerRouterByApi(): void {

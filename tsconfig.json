@@ -19,6 +19,8 @@
          "@controller/*": ["app/controller/*"],
          "@model/config/*": ["app/model/config/*"],
          "@model/entity/*": ["app/model/entity/*"],
+         "@model/repository/*": ["app/model/repository/*"],
+         "@model/service/*": ["app/model/service/*"],
          "@view/*": ["app/view/*"],
          "@env/*": ["env/*"],
          "@middleware/*": ["middleware/*"],

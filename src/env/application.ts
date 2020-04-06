@@ -1,4 +1,4 @@
-import express, { Router, json } from 'express';
+import express, { Request, Response, NextFunction, Router, json } from 'express';
 
 import compression from 'compression';
 import cors from 'cors';
@@ -12,7 +12,6 @@ import Grupo from '@model/entity/grupo';
 import { Ports } from '@env/ports';
 
 import { registerRouter, registerRouterByApi, registerRouterByModule } from '@env/router';
-import { GrupoRoutes } from '@module/admin/route/grupo-routes';
 
 export class Application {
 
@@ -45,7 +44,7 @@ export class Application {
       // registerRouterByApi();
       registerRouterByModule(this.express);
 
-      // this.teste(this.express);
+      this.registerErrorHandler(this.express);
 
       this.express.listen(port, () => {
          console.log('ativo...');
@@ -58,8 +57,12 @@ export class Application {
       });
    }
 
-   private teste(router: Router): void {
-      router.use('', new GrupoRoutes().routes);
+   private registerErrorHandler(router: Router): Response | void {
+      router.use((error: Error, request: Request, response: Response, next: NextFunction) => {
+         console.log(error.message);
+         // response.send('dhsauhduhusahduas');
+         return response.status(500).send('dshuhaduhsauhdsa');
+      });
    }
 
    private mapEntities(): ConnectionOptions {

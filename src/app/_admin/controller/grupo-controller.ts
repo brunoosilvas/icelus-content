@@ -1,21 +1,29 @@
 import { Request, Response, NextFunction } from 'express';
-import { Service } from 'typedi';
+import Container, { Service, Inject } from 'typedi';
+import { getManager, ObjectType } from 'typeorm';
 
 import { pathModuleView, pathModuleTemplate } from '@root';
+
+import Grupo from '@model/entity/grupo';
 import { GrupoService } from '@model/service/grupo-service';
-import { ConteudoService } from '@model/service/conteudo-service';
 
 @Service()
 export class GrupoController {
 
-   constructor(private grupoService:GrupoService,
-      private conteudoService:ConteudoService)
+   constructor(private grupoService:GrupoService)
    {
-
    }
 
    public async registrar(request:Request, response:Response, next:NextFunction): Promise<Response | void> {
       try {
+
+         const controller = Container.get(GrupoController);
+
+         const grupo:Grupo = null;
+         grupo.codigoInep = 21212;
+         grupo.nacionalidade = 'dshaudhusahu';
+
+         await controller.grupoService.save(grupo);
 
          const render = pathModuleTemplate('_admin', 'grupo/_layout');
          const template = pathModuleTemplate('_admin', 'template/_layout');
@@ -34,4 +42,5 @@ export class GrupoController {
          return next(error);
       }
    }
+
 }

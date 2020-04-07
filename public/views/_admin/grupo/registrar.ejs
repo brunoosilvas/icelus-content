@@ -1,50 +1,7 @@
-<%=view%>
-<div class="container-fluid">
-   <div class="row my-2">
-      <div class="col">
-         <nav class="navbar navbar-light bg-light">
-            <span class="navbar-brand mb-0 h1">Cadastro de paises</span>
-         </nav>
-      </div>
-   </div>
+<%- include('_layout'); %>
 
-   <form id="paises">
-      <div class="form-row">
-         <div class="form-group col-12 col-md-3">
-            <label for="codigo-inep">Código inep</label>
-            <input id="codigoInep" name="codigoInep" type="number" class="form-control" placeholder="Inep" required
-               data-value-type="number">
-         </div>
-      </div>
-      <div class="form-row">
-         <div class="form-group col-8 col-md-8">
-            <label for="nome">Nome</label>
-            <input id="nome" name="nome" type="text" class="form-control" placeholder="Nome" required>
-         </div>
-         <div class="form-group col-4 col-md-4">
-            <label for="sigla">Sigla</label>
-            <input id="sigla" name="sigla" type="text" class="form-control" placeholder="Sigla" required>
-         </div>
-      </div>
-      <div class="form-row">
-         <div class="form-group col-12">
-            <label for="nacionalidade">Nacionalidade</label>
-            <input id="nacionalidade" name="nacionalidade" type="text" class="form-control" placeholder="Nacionalidade" required>
-         </div>
-      </div>
-   </form>
+<script type="text/javascript" src="/static/_plugin/ckeditor/ckeditor.js"></script>
+<script type="text/javascript" src="/static/_plugin/ckeditor/adapters/jquery.js"></script>
 
-   <div class="fixed-bottom bg-light px-3 py-2">
-      <div class="row">
-         <div class="col col-md-3 col-lg-2 col-xl-1 mx-n1">
-            <button type="button" class="btn btn-primary btn-block btn-lg" onclick="save()">Confirmar</button>
-         </div>
-         <div class="col col-md-3 col-lg-2 col-xl-1 mx-n3">
-            <button type="button" class="btn btn-outline-secondary btn-block btn-lg">Cancelar</button>
-         </div>
-      </div>
-   </div>
-</div>
-
-<script type="text/javascript" src="/static/script/utils.js"></script>
+<script type="text/javascript" src="/static/script/util.js"></script>
 <script type="text/javascript" src="/static/script/_admin/grupo.js"></script>

@@ -7,6 +7,8 @@ import { pathModuleView, pathModuleTemplate } from '@root';
 import Grupo from '@model/entity/grupo';
 import { GrupoService } from '@model/service/grupo-service';
 
+import { View, ManagerView } from '@view/manager-view';
+
 @Service()
 export class GrupoController {
 
@@ -17,19 +19,17 @@ export class GrupoController {
    public async registrar(request:Request, response:Response, next:NextFunction): Promise<Response | void> {
       try {
 
-         const controller = Container.get(GrupoController);
+/*         const controller = Container.get(GrupoController);
 
          const grupo:Grupo = null;
          grupo.codigoInep = 21212;
          grupo.nacionalidade = 'dshaudhusahu';
 
-         await controller.grupoService.save(grupo);
+         await controller.grupoService.save(grupo);*/
 
-         const render = pathModuleTemplate('_admin', 'grupo/_layout');
-         const template = pathModuleTemplate('_admin', 'template/_layout');
-         const view = pathModuleView('_admin', 'grupo/registrar');
+         const view = ManagerView.view('_admin', 'template/_layout', 'grupo/registrar', {});
 
-         return response.render(render, { template, view });
+         return response.render(view.template, view.data);
       } catch (error) {
          return next(error);
       }

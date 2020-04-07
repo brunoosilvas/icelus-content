@@ -54,6 +54,29 @@ $(document).ready(function () {
          }
       })
    }
+
+   $('#tab').on('shown.bs.tab', function(event) {
+      event.preventDefault();
+
+      switch($(event.target).data('selected')) {
+         case 'principal-tab':
+            console.log('principal');
+            break;
+         case 'modelo-tab':
+            console.log('modelo');
+            break;
+         default:
+            break;
+      }
+
+   });
+   $('#modelo').ckeditor();
+
+   $('#nome').change(function() {
+      var identificador = $("#nome").textFromUrn();
+      $('#identificador').val(identificador);
+   });
+
 });
 
 function save() {

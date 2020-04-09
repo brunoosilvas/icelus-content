@@ -68,7 +68,6 @@ export class Application {
 
     private registerNotfoundHandler(router: Router): Response | void {
         router.get('*', (request: Request, response: Response) => {
-            console.log(request.path);
             return response.status(404).send('erro 404');
         });
     }

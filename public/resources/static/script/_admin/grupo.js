@@ -1,6 +1,9 @@
 $(document).ready(function () {
-   var form = $("#paises");
+   /*var form = $("#grupo");
    if (form) {
+
+      //form.enterAsTab({ 'allowSubmit': true});
+
       form.validate({
          errorElement: 'div',
          errorElementClass: 'is-invalid',
@@ -53,7 +56,7 @@ $(document).ready(function () {
             }
          }
       })
-   }
+   }*/
 
    $('#tab').on('shown.bs.tab', function(event) {
       event.preventDefault();
@@ -70,6 +73,7 @@ $(document).ready(function () {
       }
 
    });
+
    $('#modelo').ckeditor();
 
    $('#nome').change(function() {
@@ -80,7 +84,7 @@ $(document).ready(function () {
 });
 
 function save() {
-   var validForm = $("#paises").valid();
+   /*var validForm = $("#paises").valid();
    if (validForm) {
 
       var data = $("#paises").serializeJSON();
@@ -94,5 +98,5 @@ function save() {
             console.log(response);
          }
        });
-   }
+   }*/
 }

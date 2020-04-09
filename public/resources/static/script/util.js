@@ -1,19 +1,3 @@
-var globalAcentos = {
-   a: /[\xE0-\xE6]/g,
-   A: /[\xC0-\xC6]/g,
-   e: /[\xE8-\xEB]/g,
-   E: /[\xC8-\xCB]/g,
-   i: /[\xEC-\xEF]/g,
-   I: /[\xCC-\xCF]/g,
-   o: /[\xF2-\xF6]/g,
-   O: /[\xD2-\xD6]/g,
-   u: /[\xF9-\xFC]/g,
-   U: /[\xD9-\xDC]/g,
-   c: /\xE7/g,
-   C: /\xC7/g,
-   n: /\xF1/g,
-   N: /\xD1/g
-};
 
 function highlight(element, errorClass, validClass) {
    $(element).addClass(this.settings.errorElementClass).removeClass(errorClass);
@@ -23,23 +7,24 @@ function unhighlight(element, errorClass, validClass) {
    $(element).addClass(this.settings.errorElementClass).removeClass(errorClass);
 }
 
+$('input').keydown( function(e) {
+   var key = e.charCode ? e.charCode : e.keyCode ? e.keyCode : 0;
+   if(key == 13) {
+       e.preventDefault();
+       var inputs = $(this).closest('form').find(':input:visible');
+       inputs.eq( inputs.index(this)+ 1 ).focus();
+   }
+});
 
 $.fn.extend({
    textFromUrn: function() {
-      var normalize = $(this).val();
+      var text = $(this).val();
 
-      if (!normalize) {
-         return '';
-      }
-
-
-      console.log(this);
-      normalize = $(this).textNotAccents(normalize);
-      normalize = normalize.trim();
-      normalize = normalize.replace(/\s\s+/g, ' ');
-      normalize = normalize.split(' ').join('-').toLowerCase();
-
-      return normalize;
+      return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '') // Remove acentos
+         .replace(/([^\w]+|\s+)/g, '-') // Substitui espaço e outros caracteres por hífen
+         .replace(/\-\-+/g, '-')	// Substitui multiplos hífens por um único hífen
+         .replace(/(^-+|-+$)/, '') // Remove hífens extras do final ou do inicio da string
+         .toLowerCase();
    },
    textNotAccents: function(text) {
       var normalize = text;

@@ -1,7 +1,7 @@
 import { Router, NextFunction } from 'express';
-import { GrupoRoutes } from "@module/admin/route/grupo-routes";
-
 import Container from 'typedi';
+
+import { GrupoRoutes } from "@module/admin/route/grupo-routes";
 
 export interface Routes {
    initRoutes(): void;

@@ -7,11 +7,13 @@ import helmet from 'helmet';
 import { createConnection, ConnectionOptions, Connection, getConnection } from 'typeorm';
 
 import ormconfig from '@model/config/ormconfig.json';
-import Grupo from '@model/entity/grupo';
+import { Grupo } from '@model/entity/grupo';
+import { Componente } from '@model/entity/componente';
 
 import { Ports } from '@env/ports';
 
 import { registerRouter, registerRouterByApi, registerRouterByModule } from '@env/router';
+
 
 export class Application {
 
@@ -41,7 +43,7 @@ export class Application {
         this.express.set('view engine', 'ejs');
 
         // registerRouter();
-        // registerRouterByApi();
+        registerRouterByApi(this.express);
         registerRouterByModule(this.express);
 
         // this.registerErrorHandler(this.express);
@@ -75,6 +77,7 @@ export class Application {
 
     private mapEntities(): ConnectionOptions {
         ormconfig.entities.push(Grupo);
+        ormconfig.entities.push(Componente);
 
         return ormconfig as ConnectionOptions;
     }

@@ -1,8 +1,10 @@
 
 import { Entity, Column, ObjectIdColumn, ObjectID } from 'typeorm';
 
+import { Componente } from '@model/entity/componente';
+
 @Entity({name: 'grupo'})
-export default class Grupo {
+export class Grupo {
 
     @ObjectIdColumn()
     id: ObjectID;
@@ -11,12 +13,6 @@ export default class Grupo {
     nome: string;
 
     @Column()
-    sigla: string;
-
-    @Column()
-    codigoInep: number;
-
-    @Column()
-    nacionalidade: string;
+    componente: Componente[];
 
 }

@@ -12,6 +12,9 @@
       "outDir": "./dist" /* Redirect output structure to the directory. */,
       "strictNullChecks": false,
 		"paths": {
+         "@module/api/controller/*": ["app/_api/controller/*"],
+         "@module/api/model/*": ["app/_api/model/*"],
+         "@module/api/route/*": ["app/_api/route/*"],
          "@module/admin/controller/*": ["app/_admin/controller/*"],
          "@module/admin/model/*": ["app/_admin/model/*"],
          "@module/admin/route/*": ["app/_admin/route/*"],
@@ -19,6 +22,7 @@
          "@controller/*": ["app/controller/*"],
          "@model/config/*": ["app/model/config/*"],
          "@model/entity/*": ["app/model/entity/*"],
+         "@model/entity/embed*": ["app/model/entity/embed/*"],
          "@model/repository/*": ["app/model/repository/*"],
          "@model/service/*": ["app/model/service/*"],
          "@view/*": ["app/view/*"],

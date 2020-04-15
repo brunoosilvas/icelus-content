@@ -4,10 +4,12 @@ import { getManager, ObjectType } from 'typeorm';
 
 import { pathModuleView, pathModuleTemplate } from '@root';
 
-import Grupo from '@model/entity/grupo';
+import { Grupo } from '@model/entity/grupo';
 import { GrupoService } from '@model/service/grupo-service';
 
 import { View, ManagerView } from '@view/manager-view';
+
+import ejs from 'ejs';
 
 @Service()
 export class GrupoController {
@@ -19,6 +21,8 @@ export class GrupoController {
    public async registrar(request:Request, response:Response, next:NextFunction): Promise<Response | void> {
       try {
 
+
+
 /*         const controller = Container.get(GrupoController);
 
          const grupo:Grupo = null;
@@ -27,8 +31,9 @@ export class GrupoController {
 
          await controller.grupoService.save(grupo);*/
 
-         const view = ManagerView.view('_admin', 'template/_layout', 'grupo/registrar', {});
 
+
+         const view = ManagerView.view('_admin', 'template/_layout', 'grupo/registrar', {});
          return response.render(view.template, view.data);
       } catch (error) {
          return next(error);

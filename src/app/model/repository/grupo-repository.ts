@@ -1,7 +1,7 @@
 import { Service } from 'typedi';
 import { getMongoRepository, MongoRepository } from 'typeorm';
 
-import Grupo from '@model/entity/grupo';
+import { Grupo } from '@model/entity/grupo';
 
 @Service()
 export class GrupoRepository {

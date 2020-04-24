@@ -1,6 +1,6 @@
 
 
-export class Estrutura {
+export class ComponenteEstrutura {
    base?: string;
    link?: string;
    texto?: string;

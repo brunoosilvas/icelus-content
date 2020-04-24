@@ -1,6 +1,6 @@
 
 import { Entity, Column, ObjectIdColumn, ObjectID } from 'typeorm';
-import { Estrutura } from '@model/entity/embed/estrutura';
+import { ComponenteEstrutura } from '@model/entity/embed/compoente-estrutura';
 
 @Entity({name: 'componente'})
 export class Componente {
@@ -12,5 +12,5 @@ export class Componente {
     tipo: string;
 
     @Column()
-    estrutura: Estrutura;
+    estrutura: ComponenteEstrutura;
 }

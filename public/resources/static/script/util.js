@@ -25,14 +25,5 @@ $.fn.extend({
          .replace(/\-\-+/g, '-')	// Substitui multiplos hífens por um único hífen
          .replace(/(^-+|-+$)/, '') // Remove hífens extras do final ou do inicio da string
          .toLowerCase();
-   },
-   textNotAccents: function(text) {
-      var normalize = text;
-      var regex = null;
-      for (var char in globalAcentos) {
-         regex = globalAcentos[char];
-         normalize = normalize.replace(regex, char);
-      }
-      return normalize;
    }
 });

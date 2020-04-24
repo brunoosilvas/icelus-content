@@ -58,10 +58,39 @@ $(document).ready(function () {
       })
    }*/
 
-   $('#tab').on('shown.bs.tab', function(event) {
+   var navBar = new $.NavBar($('#wrapper'), { selected: 'grupo' });
+
+   var selectMenu = new $.Select($('#componente'), {
+      display: ['tipo'],
+      onSelect: function (item) {
+         console.log(item);
+      }
+   });
+
+   var listContent = new $.ListContent($('#modelo'), {
+      key: 'nomeNormalizado',
+      display: ['nome'],
+      onSelect: function (item) {
+         //console.log(item);
+
+         console.log(listContent.val());
+      }
+   });
+   listContent.val([
+      { nome: 'Padrão', nomeNormalizado: 'padrao' },
+      { nome: 'Padrão', nomeNormalizado: 'padrao1' },
+      { nome: 'Padrão', nomeNormalizado: 'padrao2' }
+
+   ]);
+
+   $.get('/api/componente', function (data) {
+      selectMenu.val(data.values);
+   });
+
+   $('#tab').on('shown.bs.tab', function (event) {
       event.preventDefault();
 
-      switch($(event.target).data('selected')) {
+      switch ($(event.target).data('selected')) {
          case 'principal-tab':
             console.log('principal');
             break;
@@ -74,29 +103,47 @@ $(document).ready(function () {
 
    });
 
-   $('#modelo').ckeditor();
-
-   $('#nome').change(function() {
+   $('#nome').change(function () {
       var identificador = $("#nome").textFromUrn();
       $('#identificador').val(identificador);
    });
 
-});
 
-function save() {
-   /*var validForm = $("#paises").valid();
-   if (validForm) {
 
-      var data = $("#paises").serializeJSON();
-      console.log(data);
+   /*CKEDITOR.config.fullPage = true;
+   CKEDITOR.config.allowedContent = true;
 
-      $.ajax({
-         type: "POST",
-         url: "/api/paises/save",
-         data: data,
-         success: function(response) {
-            console.log(response);
+   CKEDITOR.replace('modelo', {
+      height: 360,
+
+      on: {
+         instanceReady: function (evt) {
+
          }
-       });
-   }*/
-}
+      },
+
+      // Toolbar adjustments to simplify the editor.
+      toolbar: [{
+         name: 'document',
+         items: ['Source', '-', 'Undo', 'Redo']
+      },
+      {
+         name: 'basicstyles',
+         items: ['Bold', 'Italic', 'Strike', '-', 'RemoveFormat']
+      },
+      {
+         name: 'insert',
+         items: ['Format']
+      },
+      {
+         name: 'tools',
+         items: ['Maximize', 'ShowBlocks']
+      }
+      ],
+   });*/
+
+   function save() {
+
+   }
+
+});

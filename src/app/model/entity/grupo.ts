@@ -1,8 +1,6 @@
 
 import { Entity, Column, ObjectIdColumn, ObjectID } from 'typeorm';
 
-import { Componente } from '@model/entity/componente';
-
 @Entity({name: 'grupo'})
 export class Grupo {
 
@@ -13,6 +11,6 @@ export class Grupo {
     nome: string;
 
     @Column()
-    componente: Componente[];
+    identificador: string;
 
 }

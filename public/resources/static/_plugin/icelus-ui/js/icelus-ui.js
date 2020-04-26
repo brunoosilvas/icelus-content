@@ -1,14 +1,38 @@
-
 (function ($) {
 
+   $.fn.extend({
+      textFromUrn: function () {
+         var text = $(this).val();
 
-   $.fn.evalScript = function (value, format) {
+         return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '') // Remove acentos
+            .replace(/([^\w]+|\s+)/g, '-') // Substitui espaço e outros caracteres por hífen
+            .replace(/\-\-+/g, '-')	// Substitui multiplos hífens por um único hífen
+            .replace(/(^-+|-+$)/, '') // Remove hífens extras do final ou do inicio da string
+            .toLowerCase();
+      }
+   });
+
+   $.isNullOrEmpty = function(val) {
+      if (typeof(val) === 'undefined' || val === null) {
+         return true;
+      } else if (typeof(val) === 'string') {
+         return !val.trim();
+      } else if ($.isArray(val)) {
+         return val.length <= 0;
+      } else if ($.isPlainObject(val)) {
+         return $.isEmptyObject(val);
+      }
+
+      return true;
+   }
+
+   $.evalScript = function (val, format) {
       let display = '';
 
       format.forEach((d) => {
 
          let split = d.split('.');
-         let script = 'value';
+         let script = 'val';
 
          split.forEach((splitValue) => {
             if (splitValue.length > 0) {
@@ -20,6 +44,37 @@
       });
 
       return display;
+   }
+
+   $.evalObject = function (val, format) {
+      format = format.normalize('NFD').replace(/\.\.+/g, '.');
+
+      let split = format.split('.');
+
+      if (split.length > 0) {
+
+         let object = {};
+         let script = '';
+         let scriptObject = ' = { }';
+
+         split.forEach((v, i) => {
+
+            if (i == (split.length - 1)) {
+               script += `['${v}']`;
+               eval('object' + script + `= '${val}'`);
+            } else {
+               script += `['${v}']`;
+               eval('object' + script + scriptObject);
+            }
+
+         });
+
+         return object;
+      }
+
+      return {
+         [format]: val
+      };
    }
 
    /**
@@ -35,7 +90,7 @@
 
       plugin.settings = {};
 
-      var create = function () {
+      var createWidget = function () {
 
          plugin.settings = $.extend({}, defaults, options);
          plugin.el = el;
@@ -104,7 +159,7 @@
          });
       }
 
-      create();
+      createWidget();
    }
 
    /**
@@ -124,7 +179,7 @@
 
       plugin.settings = {};
 
-      var create = function () {
+      var createWidget = function () {
 
          plugin.settings = $.extend({}, defaults, options);
          plugin.el = el;
@@ -133,7 +188,7 @@
 
             if ($.isFunction(plugin.settings.onSelect)) {
                el.on('change', function () {
-                  var item = plugin.val(el.val(), plugin.settings.key);
+                  let item = plugin.val(el.val(), plugin.settings.key);
                   plugin.settings.onSelect.call(el, item);
                });
             }
@@ -141,37 +196,48 @@
          });
       }
 
-      plugin.val = function (value, key) {
-         if (typeof (value) === 'undefined') {
-            return {};
+      var set = function (val) {
+         $('option', el).remove();
+
+         el.append(`<option selected>${plugin.settings.displayEmpty}</option>`);
+
+         val.forEach((v) => {
+            let key = v[plugin.settings.key];
+            let display = $.evalScript(v, plugin.settings.display);
+            let html = `<option value="${key}">${display}</option>`;
+
+            el.append(html);
+         });
+      }
+
+      var get = function (val, key) {
+         var value = null;
+         plugin.settings.data.forEach((v, i) => {
+            if (v[key] === val) {
+               value = v;
+            }
+         });
+         return value;
+      }
+
+      plugin.val = function (val, key) {
+         if (typeof (val) === 'undefined') {
+            return null;
+         } else if (typeof (val) !== 'undefined' && typeof (key) !== 'undefined') {
+            return get(val, key);
          } else {
 
-            if (typeof (value) === 'object') {
+            if (typeof (val) === 'object') {
 
-               $('option', el).remove();
+               set(val);
 
-               el.append(`<option selected>${plugin.settings.displayEmpty}</option>`);
+               plugin.settings.data = val;
 
-               value.forEach((v) => {
-                  let display = $().evalScript(v, plugin.settings.display);
-                  el.append(`<option value="${v[plugin.settings.key]}">${display}</option>`);
-               });
-
-               plugin.settings.data = value;
-
-            } else {
-               var newValue = {};
-               plugin.settings.data.forEach((v, i) => {
-                  if (v[key] === value) {
-                     newValue = v;
-                  }
-               });
-               return newValue;
             }
          }
       }
 
-      create();
+      createWidget();
    }
 
    /**
@@ -186,13 +252,15 @@
          selected: null,
          key: 'id',
          display: [],
-         displayEmpty: 'Selecione...',
-         onSelect: function () { }
+         displaySub: [],
+         evtDisplaySub: function() { },
+         onSelect: function () { },
+         onDelete: function () { }
       };
 
       plugin.settings = {};
 
-      var create = function () {
+      var createWidget = function () {
 
          plugin.settings = $.extend({}, defaults, options);
          plugin.el = el;
@@ -203,9 +271,68 @@
 
       }
 
-      var click = function (key) {
+      var set = function (val) {
 
-         setTimeout(function() {
+         $('.list-group', el).empty();
+
+         val.forEach((v, i) => {
+            let key = v[plugin.settings.key];
+            let display = $.evalScript(v, plugin.settings.display);
+            let displaySub = $.evalScript(v, plugin.settings.displaySub);
+            let displayBadge = plugin.settings.evtDisplaySub(v);
+
+            let html = `
+            <a class="list-group-item list-group-item-action" data-toggle="list" data-key="${key}" href="#list-${key}">
+               <div class="d-flex w-100 justify-content-between align-items-center">
+                  <h6 class="mb-1">${display}</h6>
+                  <span><i class="fa fa-close" aria-hidden="true"></i></span>
+               </div>
+               <small>${displaySub}</small>
+               <span class="badge badge-pill badge-light">${displayBadge}</span>
+            </a>
+            `;
+
+            $('.list-group', el).append(html);
+
+         });
+
+         $('.list-group a', el).each(function (i, context) {
+            $(context).on('click', function (e) {
+
+               let key = $(context).data('key');
+
+               if ($(e.target).hasClass('fa fa-close')) {
+
+                  callDelete(key);
+
+               } else {
+                  effectHide();
+
+                  callClick(key);
+               }
+            })
+         });
+
+      }
+
+      var get = function (key) {
+         var value = null;
+         plugin.settings.data.forEach((v) => {
+            if (v[plugin.settings.key] === key) {
+               value = v;
+            }
+         });
+         if (value) {
+            plugin.settings.selected = value;
+         }
+         return value;
+      }
+
+      var callClick = function (key) {
+
+         el.data('key-last', key);
+
+         setTimeout(function () {
             effectShow();
          }, 250);
 
@@ -213,91 +340,200 @@
          plugin.settings.onSelect.call(el, item);
       }
 
-      var effectShow = function() {
+      var callDelete = function(key) {
+         let item = plugin.val(undefined, key);
+         plugin.settings.onDelete.call(el, item);
+      }
+
+      var effectShow = function () {
          $('.tab-pane', el).removeClass('hide');
          $('.tab-pane', el).addClass('show');
       }
 
-      var effectHide = function() {
+      var effectHide = function () {
          $('.tab-pane', el).removeClass('show');
          $('.tab-pane', el).addClass('hide');
       }
 
       plugin.val = function (val, key) {
          if (typeof (val) === 'undefined' && typeof (key) === 'undefined') {
-            return plugin.settings.selected || null;
+            return plugin.settings.data;
          } else if (typeof (val) === 'undefined' && typeof (key) !== 'undefined') {
-            var value = null;
-            plugin.settings.data.forEach((v) => {
-               if (v[plugin.settings.key] === key) {
-                  value = v;
-               }
-            });
-            if (value) {
-               plugin.settings.selected = value;
-            }
-            return value;
+            return get(key);
          } else {
 
-            if (typeof (val) === 'object') {
+            if ($.isArray(val)) {
 
-               $('.list-group a', el).remove();
-
-               val.forEach((v) => {
-                  let display = $().evalScript(v, plugin.settings.display);
-
-                  $('.list-group', el)
-                     .append(
-                        `<a class="list-group-item list-group-item-action" data-toggle="list" data-key="${v[plugin.settings.key]}" href="#list-${v[plugin.settings.key]}">
-                           ${display}
-                        </a>`
-                     );
-               });
-
-               $('.list-group a', el).each(function(i, elem) {
-                  $(elem).on('click', function() {
-
-                     effectHide();
-
-                     click($(elem).data('key'));
-                  })
-               });
+               set(val);
 
                plugin.settings.data = val;
+               plugin.settings.selected = null;
             }
          }
       }
 
-      create();
+      plugin.selected = function() {
+         return plugin.settings.selected || null;
+      }
+
+      plugin.remove = function(key) {
+         let data = plugin.settings.data.filter(item => item[plugin.settings.key] !== key);
+
+         plugin.val(data);
+      }
+
+      createWidget();
    }
 
+   /**
+    * InputGroup
+    */
 
-   /*$.fn.SelectMenu = function (options) {
+   $.InputGroup = function (el, options) {
+      var plugin = this;
 
       var defaults = {
-         data: [],
-         onSelect: function () { }
+         text: function () { },
+         onChange: function () { }
       };
 
-      var settings = $.extend({}, defaults, options);
+      plugin.settings = {};
 
-      this.each(function () {
-         $("option", this).remove();
+      var createWidget = function () {
 
-         if ($.isFunction(settings.onSelect)) {
-            $(this).on('change', function () {
-               settings.onSelect.call(this, $(this).val());
+         plugin.settings = $.extend({}, defaults, options);
+         plugin.el = el;
+
+         el.each(function () {
+
+            plugin.settings.displayText = $('span', el).text();
+
+            $('input', el).on('change', function () {
+               change();
             });
+         });
+
+      }
+
+      var change = function () {
+
+         if ($.isFunction(plugin.settings.text)) {
+            let text = plugin.settings.text();
+            if (text.length > 0) {
+               $('span', el).text(text);
+            } else {
+               $('span', el).text(plugin.settings.displayText);
+            }
          }
 
-      });
+         plugin.settings.onChange.call(el, plugin.val());
+      }
 
-      return {
-         val: function (value) {
-            console.log(value);
-            return value;
+      var set = function (val) {
+
+      }
+
+      var get = function () {
+         let keyInput = $('input', el).data('key');
+         let keyText = $('span', el).data('key');
+
+         let val = $('input', el).val();
+         let input = null;
+         let text = null;
+
+         if (!$.isNullOrEmpty(val)) {
+            input = $.evalObject($('input', el).val(), keyInput);
+            text = $.evalObject($('span', el).text(), keyText);
          }
+
+         let value = Object.assign({}, input, text);
+
+         return value;
+      }
+
+      plugin.val = function (val) {
+         if (typeof (val) === 'undefined') {
+            return get();
+         } else {
+            if ($.isPlainObject(val)) {
+               set(val);
+            }
+         }
+      }
+
+      createWidget();
+   }
+
+   /**
+    * Badge
+    */
+
+   $.Badge = function (el, options) {
+      var plugin = this;
+
+      var defaults = {
+
       };
-   }*/
+
+      plugin.settings = {};
+
+      var createWidget = function () {
+
+         plugin.settings = $.extend({}, defaults, options);
+         plugin.el = el;
+
+         el.each(function () {
+
+         });
+
+      }
+
+      createWidget();
+   }
+
+   /**
+    * Button
+    */
+
+   $.Button = function (el, options) {
+      var plugin = this;
+
+      var defaults = {
+         onClick: function () { }
+      };
+
+      plugin.settings = {};
+
+      var createWidget = function () {
+
+         plugin.settings = $.extend({}, defaults, options);
+         plugin.el = el;
+
+         el.each(function () {
+            if ($.isFunction(plugin.settings.onClick)) {
+               el.on('click', function () {
+                  plugin.settings.onClick.call(el);
+               });
+            }
+         });
+
+      }
+
+      createWidget();
+   }
+
+   Icelus = {
+      ui: {
+         Button: function (el, options) {
+            return new $.Button(el, options);
+         },
+         InputGroup: function (el, options) {
+            return new $.InputGroup(el, options);
+         },
+         NavBar: function (el, options) {
+            return new $.NavBar(el, options);
+         }
+      }
+   };
 
 }(jQuery));

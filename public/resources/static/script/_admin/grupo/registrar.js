@@ -58,6 +58,39 @@ $(document).ready(function () {
       })
    }*/
 
+   /**
+    * Variáveis
+    */
+
+   var model = {
+      modelo: [
+         { nome: 'Padrão', nomeNormalizado: 'padrao', componente: [] }
+      ]
+   }
+
+   /**
+    * Eventos
+    */
+
+   var onSelectModelo = function(item) {
+      console.log(item);
+   }
+
+   var onDeleteModelo = function(item) {
+      modeloListContent.remove(item.nomeNormalizado);
+
+      if ($.isNullOrEmpty(modeloListContent.val())) {
+         model.modelo = [];
+      } else {
+         model.modelo = modeloListContent.val();
+      }
+
+   }
+
+
+   /**
+    * Componentes
+    */
    var navBar = new $.NavBar($('#wrapper'), { selected: 'grupo' });
 
    var selectMenu = new $.Select($('#componente'), {
@@ -67,21 +100,42 @@ $(document).ready(function () {
       }
    });
 
-   var listContent = new $.ListContent($('#modelo'), {
+   var modeloListContent = new $.ListContent($('#modelos'), {
       key: 'nomeNormalizado',
       display: ['nome'],
-      onSelect: function (item) {
-         //console.log(item);
+      displaySub: ['nomeNormalizado'],
+      evtDisplaySub: function(item) {
+         return `${item.componente.length} compoente(s)`;
+      },
+      onSelect: onSelectModelo,
+      onDelete: onDeleteModelo
+   });
 
-         console.log(listContent.val());
+   modeloListContent.val(model.modelo);
+
+   var modeloInputGroup = Icelus.ui.InputGroup($('#modelo'), {
+      text: function() {
+         return $('#modelo input').textFromUrn();
+      },
+      onChange: function(item) {
+         console.log(item);
       }
    });
-   listContent.val([
-      { nome: 'Padrão', nomeNormalizado: 'padrao' },
-      { nome: 'Padrão', nomeNormalizado: 'padrao1' },
-      { nome: 'Padrão', nomeNormalizado: 'padrao2' }
 
-   ]);
+   var buttonModeloAdicionar = Icelus.ui.Button($('#button-modelo-adicionar'), {
+      onClick: function() {
+
+         let modelo = modeloInputGroup.val();
+         modelo.componente = [];
+
+         if (!$.isNullOrEmpty(modelo)) {
+            model.modelo.push(modelo);
+
+            modeloListContent.val(model.modelo);
+         }
+
+      }
+   })
 
    $.get('/api/componente', function (data) {
       selectMenu.val(data.values);
@@ -107,6 +161,12 @@ $(document).ready(function () {
       var identificador = $("#nome").textFromUrn();
       $('#identificador').val(identificador);
    });
+
+   $('#example').DataTable({
+
+   });
+
+
 
 
 

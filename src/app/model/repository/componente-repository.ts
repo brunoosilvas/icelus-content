@@ -13,7 +13,9 @@ export class ComponenteRepository {
    }
 
    public async buscar(): Promise<Componente[]> {
-      return this.repository.find({});
+      return this.repository.find({
+         cache: true
+      });
    }
 
 }

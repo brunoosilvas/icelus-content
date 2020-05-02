@@ -29,6 +29,8 @@
    $.evalScript = function (val, format) {
       let display = '';
 
+      console.log(val);
+
       format.forEach((d) => {
 
          let split = d.split('.');
@@ -253,7 +255,7 @@
          key: 'id',
          display: [],
          displaySub: [],
-         evtDisplaySub: function() { },
+         fncDisplaySub: function() { },
          onSelect: function () { },
          onDelete: function () { }
       };
@@ -277,12 +279,14 @@
 
          val.forEach((v, i) => {
             let key = v[plugin.settings.key];
+            let active = el.data('key-last') === key ? ' active' : '';
             let display = $.evalScript(v, plugin.settings.display);
             let displaySub = $.evalScript(v, plugin.settings.displaySub);
-            let displayBadge = plugin.settings.evtDisplaySub(v);
+            let displayBadge = plugin.settings.fncDisplaySub(v);
+
 
             let html = `
-            <a class="list-group-item list-group-item-action" data-toggle="list" data-key="${key}" href="#list-${key}">
+            <a class="list-group-item list-group-item-action${active}" data-toggle="list" data-key="${key}" href="#list-${key}">
                <div class="d-flex w-100 justify-content-between align-items-center">
                   <h6 class="mb-1">${display}</h6>
                   <span><i class="fa fa-close" aria-hidden="true"></i></span>
@@ -354,6 +358,8 @@
          $('.tab-pane', el).removeClass('show');
          $('.tab-pane', el).addClass('hide');
       }
+
+      //plugin.
 
       plugin.val = function (val, key) {
          if (typeof (val) === 'undefined' && typeof (key) === 'undefined') {
@@ -472,7 +478,10 @@
       var plugin = this;
 
       var defaults = {
-
+         data: [],
+         key: 'id',
+         display: [],
+         onSelect: function () { }
       };
 
       plugin.settings = {};
@@ -486,6 +495,74 @@
 
          });
 
+      }
+
+      var callClick = function (key) {
+         let item = plugin.val(undefined, key);
+         plugin.settings.onSelect.call(el, item);
+      }
+
+      var set = function(val) {
+
+         el.empty();
+
+         if ($.isArray(val)) {
+
+            val.forEach((v) => {
+
+               let key = v[plugin.settings.key];
+               let display = $.evalScript(v, plugin.settings.display);
+
+               let html =
+               `<div class="mr-2 mb-2">
+                  <a href="#" data-key="${key}" class="badge badge-light p-3">
+                     ${display} <i class="fa fa-close ml-2" aria-hidden="true"></i>
+                  </a>
+               </div>`;
+
+               el.append(html);
+
+            });
+
+            $('a', el).each(function (i, context) {
+               $(context).on('click', function (e) {
+
+                  let key = $(context).data('key');
+                  callClick(key);
+
+               })
+            });
+
+         } else if ($.isPlainObject(val)) {
+
+         }
+      }
+
+      var get = function (key) {
+         var value = null;
+         plugin.settings.data.forEach((v) => {
+            if (v[plugin.settings.key] === key) {
+               value = v;
+            }
+         });
+         if (value) {
+            plugin.settings.selected = value;
+         }
+         return value;
+      }
+
+      plugin.val = function (val, key) {
+         if (typeof (val) === 'undefined') {
+            //return get();
+         } else {
+            set(val);
+         }
+      }
+
+      plugin.remove = function(key) {
+         let data = plugin.settings.data.filter(item => item[plugin.settings.key] !== key);
+
+         plugin.val(data);
       }
 
       createWidget();
@@ -526,6 +603,9 @@
       ui: {
          Button: function (el, options) {
             return new $.Button(el, options);
+         },
+         Badge: function (el, options) {
+            return new $.Badge(el, options);
          },
          InputGroup: function (el, options) {
             return new $.InputGroup(el, options);

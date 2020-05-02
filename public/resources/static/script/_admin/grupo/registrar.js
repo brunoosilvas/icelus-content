@@ -58,87 +58,99 @@ $(document).ready(function () {
       })
    }*/
 
-   /**
-    * Variáveis
-    */
-
    var model = {
       modelo: [
          { nome: 'Padrão', nomeNormalizado: 'padrao', componente: [] }
       ]
+   };
+
+   var modeloSelected = null;
+
+   // Events
+
+   var onClickModeloAdicionar = function() {
+      let modelo = { };
+      modelo.nome = $('#modelo').val();
+      modelo.nomeNormalizado = $('#modelo').textFromUrn();
+      modelo.componente = [];
+
+      if (!$.isNullOrEmpty(modelo)) {
+         modeloListContent.add(modelo);
+      }
    }
 
-   /**
-    * Eventos
-    */
-
    var onSelectModelo = function(item) {
-      console.log(item);
+      let selected = modeloListContent.selected();
+      console.log(selected);
    }
 
    var onDeleteModelo = function(item) {
+      console.log(item);
       modeloListContent.remove(item.nomeNormalizado);
-
-      if ($.isNullOrEmpty(modeloListContent.val())) {
-         model.modelo = [];
-      } else {
-         model.modelo = modeloListContent.val();
-      }
-
    }
 
+   // Componentes
 
-   /**
-    * Componentes
-    */
-   var navBar = new $.NavBar($('#wrapper'), { selected: 'grupo' });
+   icelus.ui.NavBar($('#wrapper'), { selected: 'grupo' });
 
-   var selectMenu = new $.Select($('#componente'), {
-      display: ['tipo'],
-      onSelect: function (item) {
-         console.log(item);
+   var igModelo = icelus.ui.InputGroup($('#ig-modelo'), {
+      text: function() {
+         return $('#ig-modelo input').textFromUrn();
+      },
+      onChange: function(item) {
+
       }
    });
 
-   var modeloListContent = new $.ListContent($('#modelos'), {
+   var btnModeloAdicionar = icelus.ui.Button($('#btn-modelo-adicionar'), {
+      onClick: onClickModeloAdicionar
+   });
+   console.log(btnModeloAdicionar);
+
+   var modeloListContent = icelus.ui.ListContent($('#modelos'), {
       key: 'nomeNormalizado',
       display: ['nome'],
       displaySub: ['nomeNormalizado'],
-      evtDisplaySub: function(item) {
-         return `${item.componente.length} compoente(s)`;
+      fncDisplaySub: function(item) {
+         return `${item?.componente?.length} compoente(s)`;
       },
       onSelect: onSelectModelo,
       onDelete: onDeleteModelo
    });
 
-   modeloListContent.val(model.modelo);
+   var selComponente = icelus.ui.Select($('#componente'), {
+      display: ['tipo'],
+      onSelect: function (item) {
 
-   var modeloInputGroup = Icelus.ui.InputGroup($('#modelo'), {
-      text: function() {
-         return $('#modelo input').textFromUrn();
-      },
-      onChange: function(item) {
-         console.log(item);
       }
    });
 
-   var buttonModeloAdicionar = Icelus.ui.Button($('#button-modelo-adicionar'), {
-      onClick: function() {
-
-         let modelo = modeloInputGroup.val();
-         modelo.componente = [];
-
-         if (!$.isNullOrEmpty(modelo)) {
-            model.modelo.push(modelo);
-
-            modeloListContent.val(model.modelo);
-         }
+   var igNomeComponente = icelus.ui.InputGroup($('#ig-nome-componente'), {
+      text: function() {
+         console.log($('#ig-nome-componente input').textFromUrn());
+         return $('#ig-nome-componente input').textFromUrn();
+      },
+      onChange: function(item) {
 
       }
-   })
+   });
 
-   $.get('/api/componente', function (data) {
-      selectMenu.val(data.values);
+   var btnComponenteAdicionar = icelus.ui.Button($('#btn-modelo-componente-add'), {
+      onClick: function(e) {
+
+
+      }
+   });
+
+   var badgeModeloComponente = icelus.ui.Badge($('#modelo-componente'), {
+      key: 'nomeNormalizado',
+      display: ['nomeNormalizado'],
+      onSelect: function(item) {
+
+      },
+      onDelete: function(item) {
+         badgeModeloComponente.remove(item.nomeNormalizado);
+      }
    });
 
    $('#tab').on('shown.bs.tab', function (event) {
@@ -162,10 +174,13 @@ $(document).ready(function () {
       $('#identificador').val(identificador);
    });
 
-   $('#example').DataTable({
+   // Init
 
+   $.get('/api/componente', function (data) {
+      selComponente.val(data.values);
    });
 
+   modeloListContent.val(model.modelo);
 
 
 
@@ -201,9 +216,5 @@ $(document).ready(function () {
       }
       ],
    });*/
-
-   function save() {
-
-   }
 
 });

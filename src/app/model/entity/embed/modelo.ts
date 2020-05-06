@@ -3,7 +3,7 @@ import { ModeloComponente } from '@model/entity/embed/modelo-componente';
 export class Modelo {
    nome: string;
    nomeNormalizado: string;
-   leiaute: string;
-   leiauteCaminho: string;
+   layout: string;
+   layoutCaminho: string;
    componente: ModeloComponente[];
 }

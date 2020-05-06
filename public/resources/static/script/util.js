@@ -1,17 +1,16 @@
+const STR_EMPTY = '';
 
-function highlight(element, errorClass, validClass) {
+var highlight = function(element, errorClass, validClass) {
+   $(element).removeClass(validClass);
    $(element).addClass(this.settings.errorElementClass).removeClass(errorClass);
 }
 
-function unhighlight(element, errorClass, validClass) {
-   $(element).addClass(this.settings.errorElementClass).removeClass(errorClass);
+var unhighlight = function(element, errorClass, validClass) {
+   $(element).removeClass(this.settings.errorElementClass).removeClass(errorClass);
+   $(element).addClass(validClass);
 }
 
-$('input').keydown( function(e) {
-   var key = e.charCode ? e.charCode : e.keyCode ? e.keyCode : 0;
-   if(key == 13) {
-       e.preventDefault();
-       var inputs = $(this).closest('form').find(':input:visible');
-       inputs.eq( inputs.index(this)+ 1 ).focus();
-   }
-});
+var unhighlightNone = function(element, errorClass, validClass) {
+   $(element).removeClass(this.settings.errorElementClass).removeClass(errorClass);
+   $(element).addClass('form-control');
+}

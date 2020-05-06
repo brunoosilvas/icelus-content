@@ -58,61 +58,126 @@ $(document).ready(function () {
       })
    }*/
 
+   var formModelo = $('#form-modelo');
+   formModelo.validate({
+      errorElement: 'div',
+      errorElementClass: 'is-invalid',
+      validClass: 'is-valid',
+      errorClass: 'invalid-feedback',
+      highlight: highlight,
+      unhighlight: unhighlightNone,
+      errorPlacement: function(error, element) { },
+      rules: {
+         nomeModelo: {
+            required: true,
+            maxlength: 30
+         }
+      },
+      keyup: true
+   });
+
+   var formModeloComponente = $('#form-modelo-componente');
+   formModeloComponente.validate({
+      errorElement: 'div',
+      errorElementClass: 'is-invalid',
+      validClass: 'is-valid',
+      errorClass: 'invalid-feedback',
+      highlight: highlight,
+      unhighlight: unhighlightNone,
+      errorPlacement: function(error, element) { },
+      rules: {
+         componente: {
+            required: true
+         },
+         nomeComponente: {
+            required: true,
+            maxlength: 30
+         }
+      },
+      keyup: true
+   });
+
    var model = {
       modelo: [
          { nome: 'Padrão', nomeNormalizado: 'padrao', componente: [] }
       ]
    };
 
-   var modeloSelected = null;
+   var modeloSelecionado = null;
 
    // Events
 
-   var onClickModeloAdicionar = function() {
-      let modelo = { };
-      modelo.nome = $('#modelo').val();
-      modelo.nomeNormalizado = $('#modelo').textFromUrn();
-      modelo.componente = [];
+   var onClickModeloAdicionar = function(evt) {
+      if (formModelo.valid()) {
+         let modelo = { };
 
-      if (!$.isNullOrEmpty(modelo)) {
-         modeloListContent.add(modelo);
+         modelo.nome = $('#nome-modelo').val();
+         modelo.nomeNormalizado = $('#nome-modelo').textFromUrn();
+         modelo.componente = [];
+
+         listModelo.add(modelo);
+
+         $('#nome-modelo').val(STR_EMPTY)
       }
    }
 
+   var resetFormModeloComponente = function() {
+      $('#componente').val(STR_EMPTY);
+      $('#nome-componente').val(STR_EMPTY);
+
+      badgeModeloComponente.val(modeloSelecionado.componente);
+   }
+
    var onSelectModelo = function(item) {
-      let selected = modeloListContent.selected();
-      console.log(selected);
+      modeloSelecionado = listModelo.selected();
+      resetFormModeloComponente();
    }
 
    var onDeleteModelo = function(item) {
-      console.log(item);
-      modeloListContent.remove(item.nomeNormalizado);
+      listModelo.remove(item.nomeNormalizado);
+   }
+
+   var onClickComponenteAdicionar = function() {
+
+      if (formModeloComponente.valid()) {
+
+         let modeloComponente = { };
+         modeloComponente.nome = $('#nome-componente').val();
+         modeloComponente.nomeNormalizado = $('#nome-componente').textFromUrn();
+         modeloComponente.componente = selComponente.val();
+
+         badgeModeloComponente.add(modeloComponente);
+
+         modeloSelecionado.componente = badgeModeloComponente.val();
+
+         listModelo.refresh(modeloSelecionado);
+
+         resetFormModeloComponente();
+      }
+
+   }
+
+   var onDeleteModeloComponente = function(item) {
+      badgeModeloComponente.remove(item.nomeNormalizado);
+      modeloSelecionado.componente = badgeModeloComponente.val();
+
+      listModelo.refresh(modeloSelecionado);
    }
 
    // Componentes
 
    icelus.ui.NavBar($('#wrapper'), { selected: 'grupo' });
 
-   var igModelo = icelus.ui.InputGroup($('#ig-modelo'), {
-      text: function() {
-         return $('#ig-modelo input').textFromUrn();
-      },
-      onChange: function(item) {
-
-      }
-   });
-
    var btnModeloAdicionar = icelus.ui.Button($('#btn-modelo-adicionar'), {
       onClick: onClickModeloAdicionar
    });
-   console.log(btnModeloAdicionar);
 
-   var modeloListContent = icelus.ui.ListContent($('#modelos'), {
+   var listModelo = icelus.ui.ListContent($('#modelos'), {
       key: 'nomeNormalizado',
       display: ['nome'],
       displaySub: ['nomeNormalizado'],
       fncDisplaySub: function(item) {
-         return `${item?.componente?.length} compoente(s)`;
+         return `${item?.componente?.length ?? '0'} compoente(s)`;
       },
       onSelect: onSelectModelo,
       onDelete: onDeleteModelo
@@ -125,32 +190,16 @@ $(document).ready(function () {
       }
    });
 
-   var igNomeComponente = icelus.ui.InputGroup($('#ig-nome-componente'), {
-      text: function() {
-         console.log($('#ig-nome-componente input').textFromUrn());
-         return $('#ig-nome-componente input').textFromUrn();
-      },
-      onChange: function(item) {
-
-      }
-   });
 
    var btnComponenteAdicionar = icelus.ui.Button($('#btn-modelo-componente-add'), {
-      onClick: function(e) {
-
-
-      }
+      onClick: onClickComponenteAdicionar
    });
 
    var badgeModeloComponente = icelus.ui.Badge($('#modelo-componente'), {
       key: 'nomeNormalizado',
       display: ['nomeNormalizado'],
-      onSelect: function(item) {
-
-      },
-      onDelete: function(item) {
-         badgeModeloComponente.remove(item.nomeNormalizado);
-      }
+      displaySub: ['componente.tipo'],
+      onDelete: onDeleteModeloComponente
    });
 
    $('#tab').on('shown.bs.tab', function (event) {
@@ -180,7 +229,7 @@ $(document).ready(function () {
       selComponente.val(data.values);
    });
 
-   modeloListContent.val(model.modelo);
+   listModelo.val(model.modelo);
 
 
 

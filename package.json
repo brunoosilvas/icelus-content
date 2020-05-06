@@ -5,8 +5,7 @@
    "private": true,
    "scripts": {
       "dev": "nodemon --watch \"src/\" --watch \"public\" --exec \"ts-node src/index.ts\" -e ts",
-      "prod": "tsc && node dist/index.js",
-      "resource": "webpack"
+      "prod": "tsc && node dist/index.js"
    },
    "author": "brunoosilvas@gmail.com",
    "license": "MIT",

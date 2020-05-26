@@ -1,6 +1,6 @@
 import * as root from 'path';
 
-const views:string = 'public/views';
+const views:string = 'public/view';
 
 export function pathView(path:string) {
    return root.resolve(__dirname, '..', views, path);

@@ -2,10 +2,10 @@ import { Router } from 'express';
 import { Container, Service } from 'typedi';
 
 import { Routes } from '@env/router';
-import { ComponenteController } from '@module/api/controller/componente-controller';
+import { UploadController } from '@module/api/controller/upload-controller';
 
 @Service()
-export class ComponenteRoutesApi implements Routes {
+export class UploadRoutesApi implements Routes {
 
    private router:Router = Router();
 
@@ -14,8 +14,8 @@ export class ComponenteRoutesApi implements Routes {
    }
 
    public initRoutes(): void {
-      const controller = Container.get(ComponenteController);
-      this.router.get('/componente', controller.buscar);
+      const controller = Container.get(UploadController);
+      this.router.get('/upload', controller.teste);
    }
 
    public get routes(): Router {

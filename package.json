@@ -36,6 +36,7 @@
       "@types/helmet": "0.0.45",
       "@types/module-alias": "^2.0.0",
       "@types/node": "^12.12.37",
+      "@types/socket.io": "^2.1.8",
       "browserify": "^16.5.1",
       "webpack": "^4.43.0",
       "webpack-cli": "^3.3.11"
@@ -51,6 +52,7 @@
       "module-alias": "^2.2.2",
       "mongodb": "^3.5.7",
       "reflect-metadata": "^0.1.13",
+      "socket.io": "^2.3.0",
       "typedi": "^0.8.0",
       "typeorm": "^0.2.18"
    }

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+   <link rel="stylesheet" href="/static/_plugin/icelus-ui/css/icelus-ui-dark.css">
+   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+      integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
+   <script src="/static/_plugin/icelus-ui/js/icelus-ui.min.js"></script>
+</head>
+
+<body class="body">
+
+   <div id="wrapper" class="d-flex">
+
+      <%- include('_topbar') %>
+
+      <%- include('_sidebar') %>
+
+      <section class="content container-fluid">
+         <%- include(view) %>
+      </section>
+
+   </div>
+
+   <script>
+      $(function () {
+         var nanobar = new Nanobar();
+         nanobar.go(100);
+      });
+   </script>
+
+</body>
+
+</html>

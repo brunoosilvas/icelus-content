@@ -2,7 +2,11 @@ import { Router, NextFunction } from 'express';
 import Container from 'typedi';
 
 import { GrupoRoutes } from "@module/admin/route/grupo-routes";
-import { ComponenteRoutes } from '@module/api/route/componente-routes';
+import { UploadRoutes } from '@module/admin/route/upload-routes';
+
+import { ComponenteRoutesApi } from '@module/api/route/componente-routes';
+import { UploadRoutesApi } from '@module/api/route/upload-routes';
+
 
 export interface Routes {
    initRoutes(): void;
@@ -10,10 +14,12 @@ export interface Routes {
 
 export function registerRouterByModule(router: Router): void {
    router.use('/admin/grupo', Container.get(GrupoRoutes).routes);
+   router.use('/admin/upload', Container.get(UploadRoutes).routes);
 }
 
 export function registerRouterByApi(router: Router): void {
-   router.use('/api', Container.get(ComponenteRoutes).routes);
+   router.use('/api', Container.get(ComponenteRoutesApi).routes);
+   router.use('/api', Container.get(UploadRoutesApi).routes);
 }
 
 export function registerRouter(): void {

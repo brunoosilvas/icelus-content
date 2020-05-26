@@ -1,4 +1,5 @@
 import express, { Request, Response, NextFunction, Router, json } from 'express';
+import * as SocketIO from 'socket.io';
 
 import compression from 'compression';
 import cors from 'cors';
@@ -14,72 +15,73 @@ import { Ports } from '@env/ports';
 
 import { registerRouter, registerRouterByApi, registerRouterByModule } from '@env/router';
 
-
 export class Application {
 
-    private express: express.Application;
+   private express: express.Application;
 
-    constructor() {
-        this.express = express();
-    }
+   constructor() {
+      this.express = express();
+   }
 
-    public envioriment(): express.Application {
-        return this.express;
-    }
+   public envioriment(): express.Application {
+      return this.express;
+   }
 
-    public bootstrap(): Promise<Connection> {
-        return createConnection(this.mapEntities());
-    }
+   public bootstrap(): Promise<Connection> {
+      return createConnection(this.mapEntities());
+   }
 
-    public run(port: Ports, hasConnectionFromDatabase: boolean): void {
+   public run(port: Ports, hasConnectionFromDatabase: boolean): void {
 
-        this.express.use(cors({ origin: '*' }));
-        this.express.use(helmet());
-        this.express.use(json());
-        this.express.use(compression());
+      this.express.use(cors({ origin: '*' }));
+      this.express.use(helmet());
+      this.express.use(json());
+      this.express.use(compression());
 
-        this.express.use(express.static('public/resources'));
-        this.express.set('views', 'public/views');
-        this.express.set('view engine', 'ejs');
+      this.express.use(express.static('public/resource'));
+      this.express.set('views', 'public/view');
+      this.express.set('view engine', 'ejs');
 
-        // registerRouter();
-        registerRouterByApi(this.express);
-        registerRouterByModule(this.express);
+      // registerRouter();
+      registerRouterByApi(this.express);
+      registerRouterByModule(this.express);
 
-        // this.registerErrorHandler(this.express);
-        this.registerNotfoundHandler(this.express);
+      // this.registerErrorHandler(this.express);
+      this.registerNotfoundHandler(this.express);
 
-        this.express.listen(port, () => {
-            console.log('ativo...');
-        });
-        this.express.on('close', () => {
-            const connection: Connection = getConnection();
-            if (connection != null) {
-                connection.close();
-            }
-        });
-    }
+      this.express.on('close', () => {
+         const connection: Connection = getConnection();
+         if (connection != null) {
+            connection.close();
+         }
+      });
 
-    private registerErrorHandler(router: Router): Response | void {
-        router.use((error: Error, request: Request, response: Response, next: NextFunction) => {
-            console.log(error.message);
-            // response.send('dhsauhduhusahduas');
-            return response.status(500).send('dshuhaduhsauhdsa');
-        });
-    }
+      const server = this.express.listen(port, () => {
+         console.log(`Servidor online na porta: ${port}`);
+         this.express.set('socketio', SocketIO.listen(server));
+      });
+   }
 
-    private registerNotfoundHandler(router: Router): Response | void {
-        router.get('*', (request: Request, response: Response) => {
-            return response.status(404).send('erro 404');
-        });
-    }
+   private registerErrorHandler(router: Router): Response | void {
+      router.use((error: Error, request: Request, response: Response, next: NextFunction) => {
+         console.log(error.message);
+         // response.send('dhsauhduhusahduas');
+         return response.status(500).send('dshuhaduhsauhdsa');
+      });
+   }
+
+   private registerNotfoundHandler(router: Router): Response | void {
+      router.get('*', (request: Request, response: Response) => {
+         return response.status(404).send('erro 404');
+      });
+   }
 
 
-    private mapEntities(): ConnectionOptions {
-        ormconfig.entities.push(Grupo);
-        ormconfig.entities.push(Componente);
+   private mapEntities(): ConnectionOptions {
+      ormconfig.entities.push(Grupo);
+      ormconfig.entities.push(Componente);
 
-        return ormconfig as ConnectionOptions;
-    }
+      return ormconfig as ConnectionOptions;
+   }
 
 }

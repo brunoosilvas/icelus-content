@@ -33,7 +33,7 @@ export class GrupoController {
 
 
 
-         const view = ManagerView.view('_admin', 'template/_layout', 'grupo/registrar', {});
+         const view = ManagerView.view('_admin', '_template/_layout', 'grupo/registrar', {});
          return response.render(view.template, view.data);
       } catch (error) {
          return next(error);

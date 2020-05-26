@@ -1,5 +1,6 @@
 # build
 dist/
+public/resource/static/upload/
 
 # Logs
 logs

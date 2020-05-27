@@ -15,7 +15,7 @@ export class UploadRoutesApi implements Routes {
 
    public initRoutes(): void {
       const controller = Container.get(UploadController);
-      this.router.get('/upload', controller.teste);
+      this.router.get('/upload', controller.index);
    }
 
    public get routes(): Router {

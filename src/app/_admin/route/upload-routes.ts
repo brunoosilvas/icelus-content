@@ -15,10 +15,7 @@ export class UploadRoutes implements Routes {
 
    public initRoutes(): void {
       const controller = Container.get(UploadController);
-      this.router.get(CrudRoutes.padrao, controller.index);
-      // this.router.get(CrudRoutes.paginar, this.controller.index);
-      // this.router.get(CrudRoutes.editar, this.controller.edit);
-      // this.router.get(CrudRoutes.registar, controller.registrar);
+      this.router.get(/^([a-z-0-9-\/]+)$/i, controller.index);
    }
 
    public get routes(): Router {

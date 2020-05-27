@@ -8,17 +8,17 @@ import path from 'path';
 @Service()
 export class UploadController {
 
-   constructor(private diretorioService:DiretorioService) {
-      console.log('aqui...');
-   }
+   constructor(private diretorioService:DiretorioService) { }
 
-   public async teste(request:Request, response:Response, next:NextFunction): Promise<Response | void> {
+   public async index(request:Request, response:Response, next:NextFunction): Promise<Response | void> {
       try {
 
-         const controller = Container.get(UploadController);
-         const basedir = path.resolve('public/resource/static/upload');
+         /*const ctrl = Container.get(UploadController);
+         const basedir = path.resolve(ctrl.diretorioService.root());
 
-         console.log(controller.diretorioService.paths(basedir))
+
+         console.log(ctrl.diretorioService.root());
+         console.log(ctrl.diretorioService.paths(basedir))*/
 
 
          return response.json({});

@@ -21,6 +21,7 @@
       "@model/entity/embed": "src/app/model/entity/embed",
       "@model/repository": "src/app/model/repository",
       "@model/service": "src/app/model/service",
+      "@model/util": "src/app/model/util",
       "@view": "src/app/view",
       "@route": "src/app/route",
       "@env": "src/env",

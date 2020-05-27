@@ -25,6 +25,7 @@
          "@model/entity/embed*": ["app/model/entity/embed/*"],
          "@model/repository/*": ["app/model/repository/*"],
          "@model/service/*": ["app/model/service/*"],
+         "@model/util/*": ["app/model/util/*"],
          "@view/*": ["app/view/*"],
          "@env/*": ["env/*"],
          "@middleware/*": ["middleware/*"],

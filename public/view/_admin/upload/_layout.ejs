@@ -11,28 +11,41 @@
 
 <div class="row">
    <div class="col-6 col-md-4 col-lg-3">
+
+      <div class="d-flex align-items-center pb-2">
+         <div class="flex-grow-1">
+            <input type="text" class="form-control" id="pesquisar" placeholder="Pesquisar...">
+         </div>
+         <div class="flex-shrink-1 p-1">
+            <a id="icone-adicionar-pasta" href="#" class="icon-button p-2"></a>
+         </div>
+         <div class="flex-shrink-1 p-1">
+            <a id="icone-remover-pasta" href="#" class="icon-button p-2"></a>
+         </div>
+      </div>
+
       <ul class="list-group">
          <% for (diretorio of data.diretorios) { %>
             <% if (diretorio.base) { %>
-               <a href="<%=diretorio.base%>" class="list-group-item list-group-item-action">
-                  <div class="d-flex align-items-center">
+               <a href="<%= diretorio.base %>" class="list-group-item list-group-item-action p-0">
+                  <div class="d-flex align-items-center p-1">
                      <div class="p-1 mr-2 flex-shrink-1 bd-highlight"><i class="fa fa-exclamation-triangle"></i></div>
                      <div class="w-100 bd-highlight">ops não encontrado</div>
                   </div>
                </a>
             <% } else { %>
                <% if (diretorio.anterior) { %>
-                  <a href="<%=diretorio.link%>" class="list-group-item list-group-item-action">
-                     <div class="d-flex align-items-center">
-                        <div class="p-1 mr-2 flex-shrink-1 bd-highlight"><i class="fa fa-folder-open"></i></div>
+                  <a href="<%= diretorio.link %>" class="list-group-item list-group-item-action p-0">
+                     <div class="d-flex align-items-center p-1">
+                        <div class="p-2 mr-2 flex-shrink-1 bd-highlight"><i class="fa fa-folder-open"></i></div>
                         <div class="w-100 bd-highlight">...</div>
                      </div>
                   </a>
                <% } else { %>
-                  <a href="<%=diretorio.link%>" class="list-group-item list-group-item-action">
-                     <div class="d-flex align-items-center">
-                        <div class="p-1 mr-2 flex-shrink-1 bd-highlight"><i class="fa fa-folder"></i></div>
-                        <div class="w-100 bd-highlight"><%=diretorio.nome%></div>
+                  <a href="<%=diretorio.link%>" class="list-group-item list-group-item-action p-0">
+                     <div class="d-flex align-items-center p-1">
+                        <div class="p-1 ml-2 mr-2 flex-shrink-1 bd-highlight"><i class="fa fa-folder"></i></div>
+                        <div class="w-100 bd-highlight"><%= diretorio.nome %></div>
                      </div>
                   </a>
                <% } %>
@@ -41,9 +54,17 @@
        </ul>
    </div>
    <div class="col-6 col-md-8 col-lg-9">
-      <div class="custom-file">
-         <input type="file" multiple="multiple" class="custom-file-input" id="file">
-         <label class="custom-file-label" for="file" data-browse="Procurar">Selecione...</label>
-      </div>
+      <div id="upload"></div>
+
+      <% if (data.arquivos) { %>
+         <div class="d-flex flex-wrap pt-2">
+            <% for (arquivo of data.arquivos) { %>
+               <div class="pr-1">
+                  <img src="<%= arquivo.link %>" alt="..." class="img-thumbnail" width="150" height="150">
+               </div>
+            <% } %>
+         </div>
+      <% } %>
+
    </div>
 </div>

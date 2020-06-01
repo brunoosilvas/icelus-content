@@ -46,7 +46,7 @@ export class Application {
       registerRouterByApi(this.express);
       registerRouterByModule(this.express);
 
-      // this.registerErrorHandler(this.express);
+      this.registerErrorHandler(this.express);
       this.registerNotfoundHandler(this.express);
 
       this.express.on('close', () => {
@@ -64,9 +64,8 @@ export class Application {
 
    private registerErrorHandler(router: Router): Response | void {
       router.use((error: Error, request: Request, response: Response, next: NextFunction) => {
-         console.log(error.message);
-         // response.send('dhsauhduhusahduas');
-         return response.status(500).send('dshuhaduhsauhdsa');
+         console.log(error);
+         return response.status(500).send('erro interno');
       });
    }
 

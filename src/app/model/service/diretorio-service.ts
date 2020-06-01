@@ -6,73 +6,89 @@ import paths from 'path';
 
 import { UtilService } from '@model/service/util-service';
 import { Diretorio } from '@model/util/diretorio';
+import { Arquivo } from '@model/util/arquivo';
 
 @Service()
 export class DiretorioService {
 
-   readonly separator = '/';
+   readonly separador = '/';
 
-   private folder:Diretorio;
-   private folders:Diretorio[] = [];
+   private diretorio:Diretorio;
+   private diretorios:Diretorio[];
+   private arquivo:Arquivo;
+   private arquivos:Arquivo[];
 
    constructor(private utilService:UtilService) { }
 
-   public root(path?:string): string {
-      if (path) {
-         return paths.join(paths.resolve('public/resource/static/upload'), path);
+   public raiz(caminho?:string): string {
+      if (caminho) {
+         return paths.join(paths.resolve('public/resource/static/upload'), caminho);
       }
 
       return paths.resolve('public/resource/static/upload');
    }
 
-   public paths(base:string, path:string): Diretorio[] {
+   public getDiretorios(caminhoBase:string, caminho:string): Diretorio[] {
 
-      const root = this.root(path);
+      const root = this.raiz(caminho);
 
       if (!existsSync(root)) {
-         this.folder = new Diretorio();
-         this.folder.base = base;
-         return [this.folder];
+         this.diretorio = new Diretorio();
+         this.diretorio.base = caminhoBase;
+         return [this.diretorio];
       }
 
-      this.folders = [];
+      this.diretorios = [];
 
-      if (path !== this.separator) {
-         let basePrevious:string;
-         basePrevious = base.concat(path);
-         basePrevious = this.utilService.replaceConsecutiveChar(basePrevious, this.separator);
-         basePrevious = this.utilService.removeLastChar(basePrevious, this.separator);
-         basePrevious = this.utilService.lastCharAt(basePrevious, this.separator);
+      if (caminho !== this.separador) {
+         let baseAnterior:string;
+         baseAnterior = caminhoBase.concat(caminho);
+         baseAnterior = this.utilService.replaceConsecutiveChar(baseAnterior, this.separador);
+         baseAnterior = this.utilService.removeLastChar(baseAnterior, this.separador);
+         baseAnterior = this.utilService.lastCharAt(baseAnterior, this.separador);
 
-         this.folder = new Diretorio();
-         this.folder.anterior = true;
-         this.folder.link = basePrevious;
+         this.diretorio = new Diretorio();
+         this.diretorio.anterior = true;
+         this.diretorio.link = baseAnterior;
 
-         this.folders.push(this.folder);
+         this.diretorios.push(this.diretorio);
       }
 
-      const baseFolders = base.concat(path);
-      const moreFolders = readdirSync(root, { withFileTypes: true })
+      const baseDiretorios = caminhoBase.concat(caminho);
+      readdirSync(root, { withFileTypes: true })
          .filter(item => item.isDirectory())
          .map(item => {
-            let folder:string;
-            folder = baseFolders.concat(this.separator).concat(item.name);
-            folder = this.utilService.replaceConsecutiveChar(folder, this.separator);
+            let pasta:string;
+            pasta = baseDiretorios.concat(this.separador).concat(item.name);
+            pasta = this.utilService.replaceConsecutiveChar(pasta, this.separador);
 
-            this.folder = new Diretorio();
-            this.folder.anterior = false;
-            this.folder.link = folder;
-            this.folder.nome = item.name;
+            this.diretorio = new Diretorio();
+            this.diretorio.anterior = false;
+            this.diretorio.nome = item.name;
+            this.diretorio.link = pasta;
 
-            this.folders.push(this.folder);
+            this.diretorios.push(this.diretorio);
          });
 
-      return this.folders;
+      return this.diretorios;
    }
 
-   public files(path: string): string[] {
-      return readdirSync(path, { withFileTypes: true })
+   public getArquivos(caminho: string): Arquivo[] {
+      this.arquivos = [];
+      readdirSync(this.raiz(caminho), { withFileTypes: true })
          .filter(item => !item.isDirectory())
-         .map(item => item.name);
+         .map(item => {
+            let link = `/static/upload/${caminho}/${item.name}`;
+            link = this.utilService.replaceConsecutiveChar(link, this.separador);
+
+            this.arquivo = new Arquivo();
+            this.arquivo.extensao = item.name.split('.').pop();
+            this.arquivo.nome = item.name.split('.').shift();
+            this.arquivo.link = link;
+
+            this.arquivos.push(this.arquivo);
+         });
+
+      return this.arquivos;
    }
 }

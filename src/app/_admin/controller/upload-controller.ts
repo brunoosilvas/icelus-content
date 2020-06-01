@@ -13,9 +13,10 @@ export class UploadController {
       try {
 
          const ctrl = Container.get(UploadController);
-         const diretorios = ctrl.diretorioService.paths(request.baseUrl, request.url);
+         const diretorios = ctrl.diretorioService.getDiretorios(request.baseUrl, request.url);
+         const arquivos = ctrl.diretorioService.getArquivos(request.url);
 
-         const view = ManagerView.view('_admin', '_template/_layout', 'upload/index', { diretorios });
+         const view = ManagerView.view('_admin', '_template/_layout', 'upload/index', { diretorios, arquivos });
          return response.render(view.template, view.data);
       } catch (error) {
          return next(error);

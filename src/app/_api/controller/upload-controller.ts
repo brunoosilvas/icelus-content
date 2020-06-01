@@ -1,30 +1,30 @@
 import { Request, Response, NextFunction } from 'express';
 import Container, { Service } from 'typedi';
 
-import { DiretorioService } from '@model/service/diretorio-service';
-
-import path from 'path';
+import { UploadService } from '@model/service/upload-service';
 
 @Service()
 export class UploadController {
 
-   constructor(private diretorioService:DiretorioService) { }
+   constructor(private uploadService:UploadService) { }
 
    public async index(request:Request, response:Response, next:NextFunction): Promise<Response | void> {
       try {
 
-         /*const ctrl = Container.get(UploadController);
-         const basedir = path.resolve(ctrl.diretorioService.root());
+         const ctrl = Container.get(UploadController);
 
+         ctrl.uploadService.do('./public/resource/static/upload', request, response, (error:Error) => {
+            if (error) {
+               return next(error);
+            }
 
-         console.log(ctrl.diretorioService.root());
-         console.log(ctrl.diretorioService.paths(basedir))*/
+            return response.json({});
+         });
 
-
-         return response.json({});
       } catch (error) {
          return next(error);
       }
    }
+
 
 }

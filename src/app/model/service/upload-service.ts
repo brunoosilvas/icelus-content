@@ -21,16 +21,31 @@ export class UploadService {
             _callback(null, path);
          },
          filename: (_request, file, _callback) => {
-            const size = request.body.size as number;
             count++;
+
+            const size = request.body.size as number;
             const percentual = Math.floor((count / size) * 100);
             const socketio = _request.app.get('socketio') as SocketIO.Server;
-            socketio.emit('upload', { percentual });
-            _callback(null, file.originalname);
+            socketio.emit('upload', { percentual, concluido: percentual === 100 ? true : false });
+
+            const extesion = this.utilService.extensionFile(file.originalname);
+            const name = this.utilService.nameFile(file.originalname)
+
+            _callback(null, `${this.utilService.normalize(name)}.${extesion}`);
          }
       });
 
-      const upload = multer({ storage }).any();
+      const fileFilter = (_request: any, file: any, _callback:any) => {
+         if (file.mimetype === "image/jpg" ||
+            file.mimetype === "image/jpeg" ||
+            file.mimetype === "image/png") {
+            _callback(null, true);
+         } else {
+            _callback(new Error(`Arquivo ${file.originalname} não permitido para upload. Verifique as extensões permitidas.`), false);
+         }
+      }
+
+      const upload = multer({ storage, fileFilter }).any();
       upload(request, response, (error) => {
          callback(error);
       });

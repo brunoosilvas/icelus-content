@@ -1,10 +1,19 @@
 $(document).ready(function () {
+
    const socket = io('http://localhost/');
 
    socket.on('upload', (data) => {
-      console.log(data);
-      upload.progressUpdate(data.percentual);
+      if (data.concluido) {
+         upload.progressUpdate(data.percentual);
+         setTimeout(function() {
+            upload.progressStop()
+         }, 200);
+      } else {
+         upload.progressUpdate(data.percentual);
+      }
    });
+
+   icelus.ui.NavBar($('#wrapper'), { selected: 'upload' });
 
    var iconeAdicionarPasta = icelus.ui.IconButton($('#icone-adicionar-pasta'), {
       icon: 'fa fa-folder',
@@ -21,27 +30,30 @@ $(document).ready(function () {
    });
 
    var upload = icelus.ui.Upload($('#upload'), {
-      onSelect: function(data) {
-         //console.log(data);
-      },
       onUpload: function(data) {
-         upload.progressStart();
 
-         //data.append('path', $('#upload input[name=path]').val());
-         //data.append('size', $('#upload input[name=size]').val());
+         if (upload.size > 0) {
 
-         $.ajax({
-            url: '/api/upload',
-            data: data,
-            cache: false,
-            contentType: false,
-            processData: false,
-            type: 'POST',
-            dataType: 'json',
-            success: function(data) {
-               //upload.progressStop();
-            }
-         });
+            upload.progressStart();
+
+            $.ajax({
+               url: '/api/upload',
+               data: data,
+               cache: false,
+               contentType: false,
+               processData: false,
+               type: 'POST',
+               dataType: 'json',
+               success: function(data) {
+                  console.log(data);
+                  upload.progressStop();
+               },
+               error: function(data) {
+                  console.log('aquiii...');
+                  upload.progressStop();
+               }
+            });
+         }
       }
    })
    /*var btnUpload = icelus.ui.Button($('#btn-upload'), {

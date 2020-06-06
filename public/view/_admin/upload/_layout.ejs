@@ -55,12 +55,17 @@
    </div>
    <div class="col-6 col-md-8 col-lg-9">
       <div id="upload"></div>
+      <div>
+         <form>
+            <input type="hidden" name="path"
+         </form>
+      </div>
 
       <% if (data.arquivos) { %>
          <div class="d-flex flex-wrap pt-2">
             <% for (arquivo of data.arquivos) { %>
-               <div class="pr-1">
-                  <img src="<%= arquivo.link %>" alt="..." class="img-thumbnail" width="150" height="150">
+               <div class="flex-shrink-1 pr-2 pb-2">
+                  <img src="<%= arquivo.link %>" alt="..." class="img-thumbnail">
                </div>
             <% } %>
          </div>

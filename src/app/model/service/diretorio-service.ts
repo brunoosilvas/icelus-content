@@ -28,6 +28,10 @@ export class DiretorioService {
       return paths.resolve('public/resource/static/upload');
    }
 
+   public file(path:string, file:string): string {
+      return paths.join(paths.resolve(path), file);
+   }
+
    public getDiretorios(caminhoBase:string, caminho:string): Diretorio[] {
 
       const root = this.raiz(caminho);
@@ -78,15 +82,17 @@ export class DiretorioService {
       readdirSync(this.raiz(caminho), { withFileTypes: true })
          .filter(item => !item.isDirectory())
          .map(item => {
-            let link = `/static/upload/${caminho}/${item.name}`;
-            link = this.utilService.replaceConsecutiveChar(link, this.separador);
+            if (item.name.includes('150x150')) {
+               let link = `/static/upload/${caminho}/${item.name}`;
+               link = this.utilService.replaceConsecutiveChar(link, this.separador);
 
-            this.arquivo = new Arquivo();
-            this.arquivo.extensao = item.name.split('.').pop();
-            this.arquivo.nome = item.name.split('.').shift();
-            this.arquivo.link = link;
+               this.arquivo = new Arquivo();
+               this.arquivo.extensao = item.name.split('.').pop();
+               this.arquivo.nome = item.name.split('.').shift();
+               this.arquivo.link = link;
 
-            this.arquivos.push(this.arquivo);
+               this.arquivos.push(this.arquivo);
+            }
          });
 
       return this.arquivos;

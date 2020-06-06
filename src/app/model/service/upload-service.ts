@@ -29,9 +29,10 @@ export class UploadService {
             socketio.emit('upload', { percentual, concluido: percentual === 100 ? true : false });
 
             const extesion = this.utilService.extensionFile(file.originalname);
-            const name = this.utilService.nameFile(file.originalname)
+            const name = this.utilService.nameFile(file.originalname);
+            const nameOutput = `${this.utilService.normalize(name)}.${extesion}`;
 
-            _callback(null, `${this.utilService.normalize(name)}.${extesion}`);
+            _callback(null, nameOutput);
          }
       });
 
@@ -49,5 +50,19 @@ export class UploadService {
       upload(request, response, (error) => {
          callback(error);
       });
+   }
+
+   public thumbnail(file:string, output:string, width:number, height:number): void {
+      const sharp = require('sharp');
+      sharp(file, { failOnError: false })
+         .rotate()
+         .resize({
+            width,
+            height,
+            fit: sharp.fit.contain,
+            position: sharp.strategy.contain
+         })
+         .toFile(output)
+         .then(() => { });
    }
 }

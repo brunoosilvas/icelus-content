@@ -86,6 +86,7 @@ export class DiretorioService {
       readdirSync(this.raiz(caminho), { withFileTypes: true })
          .filter(item => !item.isDirectory())
          .map(item => {
+            console.log(item);
             if (item.name.includes(tamanho)) {
                let link = `/static/upload/${caminho}/${item.name}`;
                link = this.utilService.replaceConsecutiveChar(link, this.separador);

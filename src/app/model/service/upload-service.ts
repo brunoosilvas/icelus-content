@@ -8,6 +8,7 @@ import * as SocketIO from 'socket.io';
 import { UtilService } from '@model/service/util-service';
 import { DiretorioService } from '@model/service/diretorio-service';
 import { ConfiguracaoService } from '@model/service/configuracao-service';
+import { Configuracao } from "@model/entity/configuracao";
 
 @Service()
 export class UploadService {
@@ -43,7 +44,8 @@ export class UploadService {
       const fileFilter = (_request: any, file: any, _callback:any) => {
          if (file.mimetype === "image/jpg" ||
             file.mimetype === "image/jpeg" ||
-            file.mimetype === "image/png") {
+            file.mimetype === "image/png" ||
+            file.mimetype === "application/pdf") {
             _callback(null, true);
          } else {
             _callback(new Error(`Arquivo ${file.originalname} não permitido para upload. Verifique as extensões permitidas.`), false);
@@ -56,26 +58,13 @@ export class UploadService {
       });
    }
 
-   public async thumbnail(nome:string, saida:string, extensao:string): Promise<void> {
-
-      const configuracao = await this.configuracaoService.get();
-      const padrao = configuracao.thumbnail.padrao;
-
+   public thumbnail(configuracao:Configuracao, nome:string, saida:string, extensao:string): void {
+      if (!(extensao === "jpg" || extensao === "jpeg" || extensao === "png")) {
+         return;
+      }
       const sharp = require('sharp');
-      sharp(nome, { failOnError: false })
-            .rotate()
-            .resize({
-               width: padrao.tamanho,
-               height: padrao.tamanho,
-               fit: sharp.fit.contain,
-               position: sharp.strategy.contain
-            })
-            .toFile(`${saida}-${padrao.tamanho}x${padrao.tamanho}.${extensao}`)
-            .then(() => { });
-
-      configuracao.thumbnail.thumbnails.forEach(thumbnail => {
-
-         sharp(nome, { failOnError: false })
+      configuracao.thumbnail.thumbnails.forEach(async thumbnail => {
+         await sharp(nome, { failOnError: false })
             .rotate()
             .resize({
                width: thumbnail.tamanho,
@@ -83,9 +72,7 @@ export class UploadService {
                fit: sharp.fit.contain,
                position: sharp.strategy.contain
             })
-            .toFile(`${saida}-${thumbnail.tamanho}x${thumbnail.tamanho}.${extensao}`)
-            .then(() => { });
+            .toFile(`${saida}-${thumbnail.tamanho}x${thumbnail.tamanho}.${extensao}`);
       });
-
    }
 }

@@ -3,14 +3,7 @@ $(document).ready(function () {
    const socket = io('http://localhost/');
 
    socket.on('upload', (data) => {
-      if (data.concluido) {
-         upload.progressUpdate(data.percentual);
-         setTimeout(function() {
-            upload.progressStop()
-         }, 200);
-      } else {
-         upload.progressUpdate(data.percentual);
-      }
+      upload.progressUpdate(data.percentual);
    });
 
    icelus.ui.NavBar($('#wrapper'), { selected: 'upload' });
@@ -49,7 +42,6 @@ $(document).ready(function () {
                   upload.progressStop();
                },
                error: function(data) {
-                  console.log('aquiii...');
                   upload.progressStop();
                }
             });

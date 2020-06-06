@@ -4,11 +4,13 @@ import Container, { Service } from 'typedi';
 import { UploadService } from '@model/service/upload-service';
 import { DiretorioService } from '@model/service/diretorio-service';
 import { UtilService } from '@model/service/util-service';
+import { ConfiguracaoService } from '@model/service/configuracao-service';
 
 @Service()
 export class UploadController {
 
-   constructor(private diretorioService: DiretorioService,
+   constructor(private configuracaoService:ConfiguracaoService,
+      private diretorioService: DiretorioService,
       private uploadService: UploadService,
       private utilService: UtilService) { }
 
@@ -17,12 +19,14 @@ export class UploadController {
 
          const ctrl = Container.get(UploadController);
 
-         ctrl.uploadService.do('./public/resource/static/upload', request, response, (error: Error) => {
+         ctrl.uploadService.do('./public/resource/static/upload', request, response, async (error: Error) => {
             if (error) {
                return next(error);
             }
 
+            const configuracao = await ctrl.configuracaoService.get();
             const files = request.files as any
+
             for (const file of files) {
 
                const nomeSaida = ctrl.utilService.nameFile(file.filename);
@@ -30,7 +34,7 @@ export class UploadController {
                const nomeArquivoSaida = ctrl.diretorioService.file(file.destination, nomeSaida)
                const extensao = ctrl.utilService.extensionFile(file.filename)
 
-               ctrl.uploadService.thumbnail(nomeArquivo, nomeArquivoSaida, extensao);
+               ctrl.uploadService.thumbnail(configuracao, nomeArquivo, nomeArquivoSaida, extensao);
             }
 
             return response.json({});

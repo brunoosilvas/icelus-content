@@ -25,13 +25,12 @@ export class UploadController {
             const files = request.files as any
             for (const file of files) {
 
-               const nameFile = ctrl.diretorioService.file(file.destination, file.filename);
-               let nameOutput = '';
+               const nomeSaida = ctrl.utilService.nameFile(file.filename);
+               const nomeArquivo = ctrl.diretorioService.file(file.destination, file.filename);
+               const nomeArquivoSaida = ctrl.diretorioService.file(file.destination, nomeSaida)
+               const extensao = ctrl.utilService.extensionFile(file.filename)
 
-               nameOutput = `${ctrl.utilService.nameFile(file.filename)}-150x150.${ctrl.utilService.extensionFile(file.filename)}`
-               nameOutput = ctrl.diretorioService.file(file.destination, nameOutput);
-
-               ctrl.uploadService.thumbnail(nameFile, nameOutput, 150, 150);
+               ctrl.uploadService.thumbnail(nomeArquivo, nomeArquivoSaida, extensao);
             }
 
             return response.json({});

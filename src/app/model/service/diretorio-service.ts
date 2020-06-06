@@ -7,6 +7,7 @@ import paths from 'path';
 import { UtilService } from '@model/service/util-service';
 import { Diretorio } from '@model/util/diretorio';
 import { Arquivo } from '@model/util/arquivo';
+import { Configuracao } from "@model/entity/configuracao";
 
 @Service()
 export class DiretorioService {
@@ -77,12 +78,15 @@ export class DiretorioService {
       return this.diretorios;
    }
 
-   public getArquivos(caminho: string): Arquivo[] {
+   public getArquivos(configuracao:Configuracao, caminho: string): Arquivo[] {
+      const thumbnail = configuracao.thumbnail;
+      const tamanho = `${thumbnail.padrao.tamanho}x${thumbnail.padrao.tamanho}`;
+
       this.arquivos = [];
       readdirSync(this.raiz(caminho), { withFileTypes: true })
          .filter(item => !item.isDirectory())
          .map(item => {
-            if (item.name.includes('150x150')) {
+            if (item.name.includes(tamanho)) {
                let link = `/static/upload/${caminho}/${item.name}`;
                link = this.utilService.replaceConsecutiveChar(link, this.separador);
 

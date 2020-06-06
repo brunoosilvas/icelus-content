@@ -14,6 +14,7 @@ import { Componente } from '@model/entity/componente';
 import { Ports } from '@env/ports';
 
 import { registerRouter, registerRouterByApi, registerRouterByModule } from '@env/router';
+import { Configuracao } from '@model/entity/configuracao';
 
 export class Application {
 
@@ -79,6 +80,7 @@ export class Application {
    private mapEntities(): ConnectionOptions {
       ormconfig.entities.push(Grupo);
       ormconfig.entities.push(Componente);
+      ormconfig.entities.push(Configuracao)
 
       return ormconfig as ConnectionOptions;
    }

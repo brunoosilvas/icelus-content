@@ -1,15 +1,19 @@
 import { Service } from "typedi";
+
+import { Request, Response, NextFunction } from "express";
+import multer from 'multer';
+
+import * as SocketIO from 'socket.io';
+
 import { UtilService } from '@model/service/util-service';
 import { DiretorioService } from '@model/service/diretorio-service';
-
-import multer from 'multer';
-import { Request, Response, NextFunction } from "express";
-import * as SocketIO from 'socket.io';
+import { ConfiguracaoService } from '@model/service/configuracao-service';
 
 @Service()
 export class UploadService {
 
-   constructor(private diretorioService:DiretorioService,
+   constructor(private configuracaoService:ConfiguracaoService,
+      private diretorioService:DiretorioService,
       private utilService:UtilService) { }
 
    public do(path:string, request:Request, response:Response,
@@ -52,17 +56,36 @@ export class UploadService {
       });
    }
 
-   public thumbnail(file:string, output:string, width:number, height:number): void {
+   public async thumbnail(nome:string, saida:string, extensao:string): Promise<void> {
+
+      const configuracao = await this.configuracaoService.get();
+      const padrao = configuracao.thumbnail.padrao;
+
       const sharp = require('sharp');
-      sharp(file, { failOnError: false })
-         .rotate()
-         .resize({
-            width,
-            height,
-            fit: sharp.fit.contain,
-            position: sharp.strategy.contain
-         })
-         .toFile(output)
-         .then(() => { });
+      sharp(nome, { failOnError: false })
+            .rotate()
+            .resize({
+               width: padrao.tamanho,
+               height: padrao.tamanho,
+               fit: sharp.fit.contain,
+               position: sharp.strategy.contain
+            })
+            .toFile(`${saida}-${padrao.tamanho}x${padrao.tamanho}.${extensao}`)
+            .then(() => { });
+
+      configuracao.thumbnail.thumbnails.forEach(thumbnail => {
+
+         sharp(nome, { failOnError: false })
+            .rotate()
+            .resize({
+               width: thumbnail.tamanho,
+               height: thumbnail.tamanho,
+               fit: sharp.fit.contain,
+               position: sharp.strategy.contain
+            })
+            .toFile(`${saida}-${thumbnail.tamanho}x${thumbnail.tamanho}.${extensao}`)
+            .then(() => { });
+      });
+
    }
 }

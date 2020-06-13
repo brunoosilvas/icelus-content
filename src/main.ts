@@ -8,6 +8,6 @@ application.bootstrap()
   .then(() => {
     application.run(Ports.http, false);
   })
-  .catch(error => {
+  .catch((error:Error) => {
     application.run(Ports.http, true);
   });

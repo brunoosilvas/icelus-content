@@ -3,6 +3,11 @@ $(document).ready(function () {
    const socket = io('http://localhost/');
 
    socket.on('upload', (data) => {
+      if (data && data.nome) {
+         upload.status(`upload do arquivo: ${data.nome}`);
+      } else {
+         upload.status(`gerando thumbnail...`);
+      }
       upload.progressUpdate(data.percentual);
    });
 
@@ -22,8 +27,19 @@ $(document).ready(function () {
       }
    });
 
+   var iconeRemoverArquivo = icelus.ui.IconButton($('#icone-remover-arquivo'), {
+      icon: 'fa fa-trash',
+      onClick: function() {
+
+      }
+   });
+
    var upload = icelus.ui.Upload($('#upload'), {
+      onSelect: function(data) {
+         console.log(data.values);
+      },
       onUpload: function(data) {
+         console.log(data);
 
          if (upload.size > 0) {
 

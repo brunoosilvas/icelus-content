@@ -5,6 +5,8 @@ import { UploadService } from '@model/service/upload-service';
 import { DiretorioService } from '@model/service/diretorio-service';
 import { UtilService } from '@model/service/util-service';
 import { ConfiguracaoService } from '@model/service/configuracao-service';
+import { Arquivo } from '@model/util/arquivo';
+import { Resposta } from '@model/util/resposta';
 
 @Service()
 export class UploadController {
@@ -19,25 +21,41 @@ export class UploadController {
 
          const ctrl = Container.get(UploadController);
 
-         ctrl.uploadService.do('./public/resource/static/upload', request, response, async (error: Error) => {
+         ctrl.uploadService.do(request, response, async (error: Error) => {
+
             if (error) {
                return next(error);
             }
 
             const configuracao = await ctrl.configuracaoService.get();
-            const files = request.files as any
+            const files = request.files as Express.Multer.File[];
+            const arquivos:Arquivo[] = [];
+
+            const size = files.length;
+            let count = 0;
 
             for (const file of files) {
+               count++;
 
                const nomeSaida = ctrl.utilService.nameFile(file.filename);
                const nomeArquivo = ctrl.diretorioService.file(file.destination, file.filename);
-               const nomeArquivoSaida = ctrl.diretorioService.file(file.destination, nomeSaida)
-               const extensao = ctrl.utilService.extensionFile(file.filename)
+               const nomeArquivoSaida = ctrl.diretorioService.file(file.destination, nomeSaida);
+               const extensao = ctrl.utilService.extensionFile(file.filename);
 
-               ctrl.uploadService.thumbnail(configuracao, nomeArquivo, nomeArquivoSaida, extensao);
+               const percentual = Math.floor((count / size) * 100);
+
+               const socketio = request.app.get('socketio') as SocketIO.Server;
+               socketio.emit('upload', { percentual, concluido: percentual === 100 ? true : false });
+
+               for (const thumbnail of configuracao.thumbnail.thumbnails) {
+                  await ctrl.uploadService.thumbnail(thumbnail, nomeArquivo, nomeArquivoSaida, extensao);
+               }
             }
 
-            return response.json({});
+            const resposta:Resposta<Arquivo> = new Resposta();
+            resposta.values = ctrl.diretorioService.getArquivos(configuracao, request.body.path);
+
+            return response.json(resposta);
          });
 
       } catch (error) {

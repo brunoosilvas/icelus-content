@@ -4,4 +4,5 @@ export class Arquivo {
    extensao?: string;
    link?: string;
    imagem?: boolean;
+   thumbnail: string;
 }

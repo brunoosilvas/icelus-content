@@ -86,18 +86,34 @@ export class DiretorioService {
       readdirSync(this.raiz(caminho), { withFileTypes: true })
          .filter(item => !item.isDirectory())
          .map(item => {
-            console.log(item);
+            const extensao = this.utilService.extensionFile(item.name);
             if (item.name.includes(tamanho)) {
+               let thubnail = `/static/upload/${caminho}/${item.name}`;
+               thubnail = this.utilService.replaceConsecutiveChar(thubnail, this.separador);
+
+               this.arquivo = new Arquivo();
+               this.arquivo.extensao = item.name.split('.').pop();
+               this.arquivo.nome = item.name.split('.').shift().replace(`-${tamanho}`, '');
+               this.arquivo.link = thubnail.replace(`-${tamanho}`, '');
+               this.arquivo.thumbnail = thubnail;
+
+               this.arquivos.push(this.arquivo);
+            } else if (extensao === "pdf") {
                let link = `/static/upload/${caminho}/${item.name}`;
                link = this.utilService.replaceConsecutiveChar(link, this.separador);
+
+               let thubnail = `/static/img/system/pdf-thumbnail.png`;
+               thubnail = this.utilService.replaceConsecutiveChar(thubnail, this.separador);
 
                this.arquivo = new Arquivo();
                this.arquivo.extensao = item.name.split('.').pop();
                this.arquivo.nome = item.name.split('.').shift();
                this.arquivo.link = link;
+               this.arquivo.thumbnail = thubnail;
 
                this.arquivos.push(this.arquivo);
             }
+
          });
 
       return this.arquivos;

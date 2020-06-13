@@ -56,11 +56,24 @@
    <div class="col-6 col-md-8 col-lg-9">
       <div id="upload" data-path="<%=data.caminho%>"></div>
 
+      <div class="row">
+         <div class="col-12 col-md-8 col-lg-6 col-xl-4">
+            <div class="d-flex align-items-center pb-2">
+               <div class="flex-grow-1">
+                  <input type="text" class="form-control" id="pesquisar" placeholder="Pesquisar...">
+               </div>
+               <div class="flex-shrink-1 p-1">
+                  <a id="icone-remover-arquivo" href="#" class="icon-button p-2"></a>
+               </div>
+            </div>
+         </div>
+      </div>
+
       <% if (data.arquivos) { %>
          <div class="d-flex flex-wrap pt-2">
             <% for (arquivo of data.arquivos) { %>
                <div class="flex-shrink-1 pr-2 pb-2">
-                  <img src="<%= arquivo.link %>" alt="..." class="img-thumbnail">
+                  <img src="<%= arquivo.thumbnail %>" alt="..." class="img-thumbnail">
                </div>
             <% } %>
          </div>

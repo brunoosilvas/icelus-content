@@ -52,7 +52,7 @@ export class UploadController {
                }
             }
 
-            const resposta:Resposta<Arquivo> = new Resposta();
+            const resposta = new Resposta<Arquivo>();
             resposta.values = ctrl.diretorioService.getArquivos(configuracao, request.body.path);
 
             return response.json(resposta);

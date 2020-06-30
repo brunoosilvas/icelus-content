@@ -6,18 +6,38 @@ import sharp from 'sharp';
 
 import * as SocketIO from 'socket.io';
 
+import { Thumbnail } from '@model/entity/embed/thumbnail';
+
 import { UtilService } from '@model/service/util-service';
 import { DiretorioService } from '@model/service/diretorio-service';
-import { Thumbnail } from '@model/entity/embed/thumbnail';
+import { SocketService } from '@model/service/socket-service';
+import { ExtensaoEnum, MimetypeEnum, Extensao } from '@model/util/extensao';
 
 @Service()
 export class UploadService {
 
-   constructor(private diretorioService:DiretorioService,
-      private utilService:UtilService) { }
+   private mimetypePermitidaParaUpload = [
+      MimetypeEnum.JPG,
+      MimetypeEnum.JPEG,
+      MimetypeEnum.MP4,
+      MimetypeEnum.PDF,
+      MimetypeEnum.MP4
+   ];
 
-   public do(request:Request, response:Response,
+   private extensaoPermitidaParaThumbnail = [
+      ExtensaoEnum.JPEG,
+      ExtensaoEnum.JPG,
+      ExtensaoEnum.PNG
+   ]
+
+   constructor(private diretorioService: DiretorioService,
+      private utilService: UtilService,
+      private socketService: SocketService) { }
+
+   public do(request: Request, response: Response,
       callback: (error:Error) => void): void {
+
+      const socketio = request.app.get('socketio')
 
       let count = 0;
       const storage = multer.diskStorage({
@@ -32,22 +52,22 @@ export class UploadService {
             const nome = this.utilService.nameFile(_file.originalname);
             const nomeSaida = `${this.utilService.normalize(nome)}.${extensao}`;
 
-            const size = request.body.size as number;
+            const size = _request.body.size as number;
             const percentual = Math.floor((count / size) * 100);
 
-            const socketio = _request.app.get('socketio') as SocketIO.Server;
-            socketio.emit('upload', { nome: `${nome}.${extensao}`, percentual, concluido: percentual === 100 ? true : false });
+            this.socketService.send(socketio, 'upload', {
+               nome: `${nome}.${extensao}`,
+               percentual,
+               concluido: percentual === 100 ? true : false
+            });
 
             _callback(null, nomeSaida);
          }
       });
 
-      const fileFilter = (_request: any, _file: any, _callback:any) => {
-         if (_file.mimetype === "image/jpg" ||
-            _file.mimetype === "image/jpeg" ||
-            _file.mimetype === "image/png" ||
-            _file.mimetype === "application/pdf" ||
-            _file.mimetype === "video/mp4") {
+      const fileFilter = (_request: any, _file: any, _callback: any) => {
+         const ePermitida = Extensao.mimetypePermitida(this.mimetypePermitidaParaUpload, _file.mimetype);
+         if (ePermitida) {
             _callback(null, true);
          } else {
             _callback(new Error(`Arquivo ${_file.originalname} não permitido para upload. Verifique as extensões permitidas.`), false);
@@ -58,9 +78,12 @@ export class UploadService {
       upload(request, response, (error) => { callback(error); });
    }
 
-   public thumbnail(thumbnail:Thumbnail, nome:string, saida:string, extensao:string): Promise<sharp.OutputInfo> {
-      if (!(extensao === "jpg" || extensao === "jpeg" || extensao === "png")) {
-         return null;
+   public thumbnail(thumbnail: Thumbnail, nome: string, saida: string, extensao: string): Promise<sharp.OutputInfo> {
+
+      const saoPermitida = Extensao.extensaoPermitda(this.extensaoPermitidaParaThumbnail, extensao);
+
+      if (!saoPermitida) {
+         return Promise.resolve(null);
       }
 
       return sharp(nome, { failOnError: false })
